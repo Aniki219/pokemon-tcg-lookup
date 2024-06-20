@@ -1,58 +1,95 @@
 import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
+import { Card, CardResults } from "./interfaces/Card";
+import CardDisplay from "./components/CardDisplay";
 
 const Popup = () => {
-  const [count, setCount] = useState(0);
-  const [currentURL, setCurrentURL] = useState<string>();
+    const [cardData, setCardData] = useState<CardResults>();
+    const [cardIndex, setCardIndex] = useState(0);
+    const [currentCard, setCurrentCard] = useState<Card>();
 
-  useEffect(() => {
-    chrome.action.setBadgeText({ text: count.toString() });
-  }, [count]);
+    const getCardData = async (name: string) => {
+        const url = `https://api.pokemontcg.io/v2/cards?q=legalities.standard:legal name:${name}*`;
+        fetch(url, {
+            method: "GET",
+            headers: {
+                "X-Auth-Token": "17c8d715-dcfb-49a1-9312-cab4f6c63206"
+            }
+        })
+            .then(resp => resp.json())
+            .then(function (cardData: CardResults) {
+                setCardData(cardData);
+                setCardIndex(0);
+                setCurrentCard(cardData.data[0]);
+            });
+    }
 
-  useEffect(() => {
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      setCurrentURL(tabs[0].url);
-    });
-  }, []);
+    const incrementCardIndex = (inc: number): void => {
+        if (!cardData) {
+            setCardIndex(0);
+            return;
+        }
 
-  const changeBackground = () => {
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      const tab = tabs[0];
-      if (tab.id) {
-        chrome.tabs.sendMessage(
-          tab.id,
-          {
-            color: "#555555",
-          },
-          (msg) => {
-            console.log("result message:", msg);
-          }
-        );
-      }
-    });
-  };
+        const index = ((cardIndex + inc) + cardData.count) % cardData.count;
+        setCardIndex(index);
+        setCurrentCard(cardData.data[index]);
+    }
 
-  return (
-    <>
-      <ul style={{ minWidth: "700px" }}>
-        <li>Current URL: {currentURL}</li>
-        <li>Current Time: {new Date().toLocaleTimeString()}</li>
-      </ul>
-      <button
-        onClick={() => setCount(count + 1)}
-        style={{ marginRight: "5px" }}
-      >
-        count up
-      </button>
-      <button onClick={changeBackground}>change background</button>
-    </>
-  );
+    const showIndex = () => {
+        if (!cardData) return <></>
+        return (
+            <span>
+                <button onClick={() => { incrementCardIndex(-1) }} style={{
+                    background: "none",
+                    border: "none",
+                    fontSize: "16px"
+                }}>🠜</button>
+                <span style={{ marginLeft: "10px", marginRight: "10px" }}>
+                    {cardIndex + 1} / {cardData.count}
+                </span>
+                <button onClick={() => { incrementCardIndex(1) }} style={{
+                    background: "none",
+                    border: "none",
+                    fontSize: "16px"
+                }}>🠞</button>
+            </span>
+        )
+    }
+
+    const [name, setName] = useState("");
+
+    const handleSubmit = (event: React.FormEvent<EventTarget | HTMLFormElement>) => {
+        event.preventDefault();
+        getCardData(name)
+    }
+
+    return (
+        <div>
+            <div style={{ minWidth: "400px", textAlign: "center" }}>
+                <h2>Pokemon TCG Lookup:</h2>
+                <div>
+                    <form onSubmit={(e) => { handleSubmit(e) }}>
+                        <label>Enter your name:
+                            <input
+                                type="text"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                            />
+                        </label>
+                        <input type="submit" />
+                    </form>
+                </div>
+                {showIndex()}
+            </div>
+            <CardDisplay card={currentCard} incrementCardIndex={incrementCardIndex}></CardDisplay>
+        </div>
+    );
 };
 
 const root = createRoot(document.getElementById("root")!);
 
 root.render(
-  <React.StrictMode>
-    <Popup />
-  </React.StrictMode>
+    <React.StrictMode>
+        <Popup />
+    </React.StrictMode>
 );

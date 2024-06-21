@@ -3,13 +3,43 @@ import CardDisplay from "./CardDisplay";
 import { Card, CardResults } from "../interfaces/Card";
 import process from "process";
 
-export default function CardDisplayFrame() {
+interface ICardDisplayFrameProps {
+    cardNames: string[]
+}
+
+export default function CardDisplayFrame(props: React.PropsWithChildren<ICardDisplayFrameProps>) {
     const [cardData, setCardData] = useState<CardResults>();
     const [cardIndex, setCardIndex] = useState(0);
     const [currentCard, setCurrentCard] = useState<Card>();
 
+    const { cardNames } = props;
+
+    const subtypes = [
+        "ex",
+        "vmax",
+        "v",
+        "break",
+        "gx",
+        "mega",
+        "legend",
+        "level-up",
+        "Restored",
+        "Technical Machine"
+    ]
+
+    const getSubTypes = (name: string): string => {
+        let result = name.toLowerCase();
+        subtypes.forEach((subtype) => {
+            const regex = new RegExp(`\\s${subtype.toLowerCase()}$`, "g")
+            result = result.replace(regex, ` subtypes:${subtype.toLowerCase()}`);
+        });
+        return result;
+    }
+
     const getCardData = async (name: string) => {
-        const url = `https://api.pokemontcg.io/v2/cards?q=legalities.standard:legal name:${name}*`;
+        const nameWithSubtypes = getSubTypes(name);
+        const url = `https://api.pokemontcg.io/v2/cards?q=legalities.standard:legal name:${nameWithSubtypes}`;
+        console.log(url);
         fetch(url, {
             method: "GET",
             headers: {
@@ -63,18 +93,36 @@ export default function CardDisplayFrame() {
         getCardData(name)
     }
 
+    const getCardListOptions = () => {
+        if (!cardNames) {
+            return <></>
+        }
+        return (
+            <datalist id="cardName">
+                {
+                    cardNames.map((cardName, i) => {
+                        return <option key={i} value={cardName} />
+                    })
+                }
+            </datalist>
+        )
+    }
+
     return (
         <div>
             <div style={{ minWidth: "400px", textAlign: "center" }}>
                 <h2>Pokemon TCG Lookup:</h2>
                 <div>
                     <form onSubmit={(e) => { handleSubmit(e) }}>
-                        <label>Enter your name:
+                        <label>Card Name:
                             <input
+                                list="cardName"
+                                autoFocus={true}
                                 type="text"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
                             />
+                            {getCardListOptions()}
                         </label>
                         <input type="submit" />
                     </form>

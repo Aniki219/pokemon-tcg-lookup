@@ -1,0 +1,32 @@
+.fadeOut {
+    animation: fadeOutAnim 4s;
+}
+
+@keyframes fadeOutAnim {
+    0% {
+        opacity: 0;
+    }
+
+    25% {
+        opacity: 1;
+    }
+
+    75% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+.statusBar {
+    position: absolute;
+    bottom: 6px;
+    left: 6px;
+    right: 6px;
+    background-color: rgb(200 214 222);
+    height: 20px;
+    border: 1px solid grey;
+    border-width: 1px 1px 0 1px;
+}

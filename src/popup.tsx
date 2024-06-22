@@ -12,7 +12,6 @@ const Popup = () => {
     const [check, setCheck] = useState(false);
 
     useEffect(() => {
-
         chrome.storage.local.get(["cardNames"], (data) => {
             const { cardNames } = data;
             if (cardNames && cardNames.length > 0) {
@@ -20,7 +19,7 @@ const Popup = () => {
                 checkForNewSet();
             } else {
                 setFetchingReason("Initializing Card Data");
-                getAllStandardCardNames([], 1);
+                resyncCardNames();
             }
         })
     }, []);
@@ -29,43 +28,50 @@ const Popup = () => {
     const [fetchPage, setFetchPage] = useState(1);
     const [pagesTotal, setPagesTotal] = useState(20);
 
-    const getAllStandardCardNames = async (cardNames: string[], page: number) => {
+    const getAllStandardCardNames = async (totalPages: number) => {
         setFetchingAllCardNames(true);
-        new Promise<CardResults>((resolve) => {
-            const url = `https://api.pokemontcg.io/v2/cards?page=${page}&q=legalities.standard:legal`;
-            fetch(url, {
-                method: "GET",
-                headers: {
-                    "X-Auth-Token": process.env.POKEMON_SECRET as string
-                }
+
+        const promises = (new Array(totalPages)).fill(0).map((_, i) => {
+            return new Promise<CardResults>((resolve) => {
+                const url = `https://api.pokemontcg.io/v2/cards?page=${i + 1}&q=legalities.standard:legal`;
+                fetch(url, {
+                    method: "GET",
+                    headers: {
+                        "X-Auth-Token": process.env.POKEMON_SECRET as string
+                    }
+                })
+                    .then(resp => resp.json())
+                    .then(function (res: CardResults) {
+                        console.log("promise " + i + ": ", res);
+                        return resolve(res);
+                    });
             })
-                .then(resp => resp.json())
-                .then(function (cardData: CardResults) {
-                    return resolve(cardData);
-                });
-        }).then((cardData: CardResults) => {
-            const pageNames = cardData.data.map(card => card.name);
-            const { page, pageSize, totalCount } = cardData;
-            const concatonedNames = cardNames.concat(pageNames);
-            if (page * pageSize >= totalCount) {
-                const uniqueNames = Array.from(new Set(concatonedNames));
+        })
+
+        Promise.all<CardResults>(
+            promises
+        )
+            .then((cardData: CardResults[]) => {
+                console.log("promiseAll: ", cardData);
+                const pagesData = cardData.map(page => {
+                    if (page && page.data) {
+                        return page.data;
+                    }
+                    return [] as Card[];
+                }); //Card[][]
+                const names = pagesData.flat().map(data => data.name);
+                const uniqueNames = Array.from(new Set(names));
                 const alphabetizedNames = uniqueNames.sort((a, b) => (a > b) ? 1 : -1)
-                console.log(alphabetizedNames);
                 chrome.storage.local.set({ "cardNames": alphabetizedNames });
                 setCardNames(alphabetizedNames);
                 setFetchingAllCardNames(false);
-                setFetchPage(1);
-                setPagesTotal(1);
-            } else {
-                console.log("Got page: " + page);
-                setFetchPage(page + 1);
-                setPagesTotal(Math.ceil(totalCount / pageSize));
-                getAllStandardCardNames(concatonedNames, page + 1);
             }
-        });
+            );
     }
+    const resyncCardNames = async () => fetchAllCardNames();
+    const checkForNewSet = async () => fetchAllCardNames(true);
 
-    const checkForNewSet = async () => {
+    const fetchAllCardNames = async (onlyIfNewSetExists = false) => {
         chrome.storage.local.get(["currentSet"], async (set) => {
             const { currentSet } = set;
             const url = `https://api.pokemontcg.io/v2/sets?q=legalities.standard:legal`;
@@ -76,16 +82,21 @@ const Popup = () => {
                 }
             })
                 .then(resp => resp.json())
-                .then(function (setsData: { data: { name: string }[] }) {
+                .then(function (setsData: { data: { name: string, total: number }[] }) {
                     const latestSet = setsData.data.at(-1)?.name as string;
                     console.log("current set: " + currentSet, "latest set: " + latestSet);
-                    if (currentSet !== latestSet) {
+                    const totalCards = setsData.data
+                        .map(d => d.total)
+                        .reduce((a, b) => a + b, 0);
+                    const totalPages = Math.ceil(totalCards / 250);
+                    if (currentSet !== latestSet || !onlyIfNewSetExists) {
                         chrome.storage.local.set({ "currentSet": latestSet });
-                        chrome.storage.local.get(["currentSet"], (data) => {
-                            console.log("data: " + data)
-                        });
-                        setFetchingReason("Fetching new Set " + latestSet);
-                        getAllStandardCardNames([], 1);
+                        if (currentSet !== latestSet) {
+                            setFetchingReason("Fetching new set " + latestSet);
+                        } else {
+                            setFetchingReason("Resyncing card names up to set: " + latestSet);
+                        }
+                        getAllStandardCardNames(totalPages);
                     }
                 });
         });
@@ -96,7 +107,7 @@ const Popup = () => {
     const showFetchStatus = () => {
         if (fetchingAllCardNames) {
             return (
-                <p>{fetchingReason}: {fetchPage} / {pagesTotal}</p>
+                <p>{fetchingReason}...</p>
             )
         }
     }
@@ -109,7 +120,7 @@ const Popup = () => {
         return (
             <div style={{ minHeight: "200px" }}>
                 {showFetchStatus()}
-                <CardDisplayFrame cardNames={cardNames}></CardDisplayFrame>
+                <CardDisplayFrame cardNames={cardNames} resync={resyncCardNames}></CardDisplayFrame>
             </div>
         )
     }

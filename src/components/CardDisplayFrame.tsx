@@ -5,7 +5,8 @@ import process from "process";
 import "./CardDisplayFrame.css"
 
 interface ICardDisplayFrameProps {
-    cardNames: string[]
+    cardNames: string[],
+    resync: () => Promise<void>
 }
 
 export default function CardDisplayFrame(props: React.PropsWithChildren<ICardDisplayFrameProps>) {
@@ -96,7 +97,7 @@ export default function CardDisplayFrame(props: React.PropsWithChildren<ICardDis
                         />
                         {getCardListOptions()}
                         <input type="submit" className="search" value="Search" />
-                        <button onClick={(e) => { e.preventDefault(); }} title="Re-Fetch card names data. (Paginated request takes about 2 minutes).">ReSync</button>
+                        <button onClick={(e) => { e.preventDefault(); props.resync(); }} title="Re-Fetch card names data. (Paginated request takes about 2 minutes).">ReSync</button>
 
                     </form>
                 </div>

@@ -9,12 +9,17 @@ import CardDisplayFrame from "./components/CardDisplayFrame";
 const Popup = () => {
     const [cardNames, setCardNames] = useState<string[]>([])
 
+    const [check, setCheck] = useState(false);
+
     useEffect(() => {
+
         chrome.storage.local.get(["cardNames"], (data) => {
             const { cardNames } = data;
             if (cardNames && cardNames.length > 0) {
-                setCardNames(cardNames as string[]);
+                setCardNames(cardNames);
+                checkForNewSet();
             } else {
+                setFetchingReason("Initializing Card Data");
                 getAllStandardCardNames([], 1);
             }
         })
@@ -43,9 +48,11 @@ const Popup = () => {
             const { page, pageSize, totalCount } = cardData;
             const concatonedNames = cardNames.concat(pageNames);
             if (page * pageSize >= totalCount) {
-                console.log(concatonedNames);
-                chrome.storage.local.set({ "cardNames": concatonedNames });
-                setCardNames(concatonedNames);
+                const uniqueNames = Array.from(new Set(concatonedNames));
+                const alphabetizedNames = uniqueNames.sort((a, b) => (a > b) ? 1 : -1)
+                console.log(alphabetizedNames);
+                chrome.storage.local.set({ "cardNames": alphabetizedNames });
+                setCardNames(alphabetizedNames);
                 setFetchingAllCardNames(false);
                 setFetchPage(1);
                 setPagesTotal(1);
@@ -58,14 +65,38 @@ const Popup = () => {
         });
     }
 
-    const showFetchButton = () => {
+    const checkForNewSet = async () => {
+        chrome.storage.local.get(["currentSet"], async (set) => {
+            const { currentSet } = set;
+            const url = `https://api.pokemontcg.io/v2/sets?q=legalities.standard:legal`;
+            fetch(url, {
+                method: "GET",
+                headers: {
+                    "X-Auth-Token": process.env.POKEMON_SECRET as string
+                }
+            })
+                .then(resp => resp.json())
+                .then(function (setsData: { data: { name: string }[] }) {
+                    const latestSet = setsData.data.at(-1)?.name as string;
+                    console.log("current set: " + currentSet, "latest set: " + latestSet);
+                    if (currentSet !== latestSet) {
+                        chrome.storage.local.set({ "currentSet": latestSet });
+                        chrome.storage.local.get(["currentSet"], (data) => {
+                            console.log("data: " + data)
+                        });
+                        setFetchingReason("Fetching new Set " + latestSet);
+                        getAllStandardCardNames([], 1);
+                    }
+                });
+        });
+    }
+
+    const [fetchingReason, setFetchingReason] = useState("Initializing Card Data");
+
+    const showFetchStatus = () => {
         if (fetchingAllCardNames) {
             return (
-                <p>Fetching pages: {fetchPage} / {pagesTotal}</p>
-            )
-        } else {
-            return (
-                <button onClick={() => getAllStandardCardNames([], 1)}>Sync Card Names</button>
+                <p>{fetchingReason}: {fetchPage} / {pagesTotal}</p>
             )
         }
     }
@@ -76,10 +107,10 @@ const Popup = () => {
         </>
     } else {
         return (
-            <>
-                {showFetchButton()}
+            <div style={{ minHeight: "200px" }}>
+                {showFetchStatus()}
                 <CardDisplayFrame cardNames={cardNames}></CardDisplayFrame>
-            </>
+            </div>
         )
     }
 };

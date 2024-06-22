@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import CardDisplay from "./CardDisplay";
 import { Card, CardResults } from "../interfaces/Card";
 import process from "process";
+import "./CardDisplayFrame.css"
 
 interface ICardDisplayFrameProps {
     cardNames: string[]
@@ -14,32 +15,8 @@ export default function CardDisplayFrame(props: React.PropsWithChildren<ICardDis
 
     const { cardNames } = props;
 
-    const subtypes = [
-        "ex",
-        "vmax",
-        "v",
-        "break",
-        "gx",
-        "mega",
-        "legend",
-        "level-up",
-        "Restored",
-        "Technical Machine"
-    ]
-
-    const getSubTypes = (name: string): string => {
-        let result = name.toLowerCase();
-        subtypes.forEach((subtype) => {
-            const regex = new RegExp(`\\s${subtype.toLowerCase()}$`, "g")
-            result = result.replace(regex, ` subtypes:${subtype.toLowerCase()}`);
-        });
-        return result;
-    }
-
     const getCardData = async (name: string) => {
-        const nameWithSubtypes = getSubTypes(name);
-        const url = `https://api.pokemontcg.io/v2/cards?q=legalities.standard:legal name:${nameWithSubtypes}`;
-        console.log(url);
+        const url = `https://api.pokemontcg.io/v2/cards?q=legalities.standard:legal name:"${name}"`;
         fetch(url, {
             method: "GET",
             headers: {
@@ -68,20 +45,12 @@ export default function CardDisplayFrame(props: React.PropsWithChildren<ICardDis
     const showIndex = () => {
         if (!cardData) return <></>
         return (
-            <span>
-                <button onClick={() => { incrementCardIndex(-1) }} style={{
-                    background: "none",
-                    border: "none",
-                    fontSize: "16px"
-                }}>🠜</button>
+            <span className="navbar">
+                <button onClick={() => { incrementCardIndex(-1) }}>🠜</button>
                 <span style={{ marginLeft: "10px", marginRight: "10px" }}>
                     {cardIndex + 1} / {cardData.count}
                 </span>
-                <button onClick={() => { incrementCardIndex(1) }} style={{
-                    background: "none",
-                    border: "none",
-                    fontSize: "16px"
-                }}>🠞</button>
+                <button onClick={() => { incrementCardIndex(1) }}>🠞</button>
             </span>
         )
     }
@@ -110,21 +79,25 @@ export default function CardDisplayFrame(props: React.PropsWithChildren<ICardDis
 
     return (
         <div>
-            <div style={{ minWidth: "400px", textAlign: "center" }}>
+            <div style={{ minWidth: "500px", textAlign: "center" }}>
                 <h2>Pokemon TCG Lookup:</h2>
                 <div>
                     <form onSubmit={(e) => { handleSubmit(e) }}>
-                        <label>Card Name:
-                            <input
-                                list="cardName"
-                                autoFocus={true}
-                                type="text"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                            />
-                            {getCardListOptions()}
+                        <label style={{ fontSize: "16px" }}>
+                            Card Name:
                         </label>
-                        <input type="submit" />
+                        <input
+                            list="cardName"
+                            autoFocus={true}
+                            type="text"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            style={{ margin: "3px" }}
+                        />
+                        {getCardListOptions()}
+                        <input type="submit" className="search" value="Search" />
+                        <button onClick={(e) => { e.preventDefault(); }} title="Re-Fetch card names data. (Paginated request takes about 2 minutes).">ReSync</button>
+
                     </form>
                 </div>
                 {showIndex()}

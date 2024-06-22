@@ -36,6 +36,13 @@ module.exports = {
                 use: "ts-loader",
                 exclude: /node_modules/,
             },
+            {
+                test: /\.css$/,
+                use: [
+                    "style-loader", // 3. Inject styles into DOM
+                    "css-loader", // 2. Turns css into commonjs
+                ],
+            },
         ],
     },
     resolve: {
@@ -47,4 +54,5 @@ module.exports = {
             options: {},
         }),
     ],
+
 };

@@ -1,0 +1,13 @@
+.navbar {
+    font-size: 16px;
+}
+
+.navbar button {
+    background: none;
+    border: none;
+    font-size: 24px;
+}
+
+.navbar button:hover {
+    color: red;
+}

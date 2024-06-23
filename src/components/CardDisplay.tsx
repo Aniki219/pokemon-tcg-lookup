@@ -1,6 +1,6 @@
 import React from "react"
 import { Card } from "../interfaces/Card"
-import "./CardDisplay.css"
+import "./styles/CardDisplay.css"
 
 export default function CardDisplay({ card, incrementCardIndex }: { card: Card | undefined, incrementCardIndex: (inc: number) => void }) {
     if (!card) {
@@ -25,16 +25,24 @@ export default function CardDisplay({ card, incrementCardIndex }: { card: Card |
             <div className="cardText">
                 <ul>
                     {card.abilities?.map(ability => {
-                        return <li>
-                            <h2>{ability.name} (<b style={{ color: "red" }}>{ability.type}</b>)</h2>
+                        return <li className="ability">
+                            <h2>{ability.name}</h2>
+                            <div className="abilityLabel">{ability.type}</div>
                             <p>{ability.text}</p>
                         </li>
                     })}
                 </ul>
                 <ul>
                     {card.attacks?.map(attack => {
-                        return <li>
-                            <h2>{attack.name} {attack.damage ? `- (${attack.damage})` : ""}</h2>
+                        return <li className="attack">
+                            <h2>
+                                <div className="attackName">
+                                    {attack.name}
+                                </div>
+                                <div className="damage">
+                                    {attack.damage ? `${attack.damage}` : ""}
+                                </div>
+                            </h2>
                             {attackCostIcons(attack.cost)}
                             <p>{attack.text}</p>
                         </li>

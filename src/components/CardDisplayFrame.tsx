@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import CardDisplay from "./CardDisplay";
 import { Card, CardResults } from "../interfaces/Card";
 import process from "process";
-import "./CardDisplayFrame.css"
+import "./styles/CardDisplayFrame.css"
 
 interface ICardDisplayFrameProps {
     cardNames: string[],

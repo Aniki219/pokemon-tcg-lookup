@@ -1,0 +1,58 @@
+h2,
+p,
+i {
+    margin: 4px
+}
+
+.attackCost {
+    margin: 4px
+}
+
+.cardText {
+    width: 46%;
+    scrollbar-width: thin;
+    overflow-y: auto;
+    /*Exact Card Height*/
+    max-height: 342px;
+    color: white;
+    background: #00000047;
+    border-radius: 10px;
+}
+
+.cardText ul {
+    list-style: none;
+    padding-left: 10px
+}
+
+.cardText p,
+.cardText i {
+    font-size: 14px;
+    line-height: 17px;
+}
+
+.cardText li {
+    margin-bottom: 20px;
+}
+
+.ability p {
+    font-style: italic;
+}
+
+.abilityLabel {
+    color: #ffffff;
+    font-style: italic;
+    font-weight: 600;
+    text-shadow: 0px 0px 5px #ff0000;
+    font-size: 14px;
+}
+
+.attackName {
+    display: inline-block;
+    width: 80%;
+}
+
+.damage {
+    width: 18%;
+    text-align: right;
+    display: inline-block;
+}

@@ -1,14 +1,12 @@
 # Pokemon TCG Card Lookup
 
+![](https://github.com/Aniki219/pokemon-tcg-lookup/raw/main/public/screenshots/Window.png)
+
 A Chrome extension which allows you to quickly and easily lookup any card in Standard play and read it's text.
 The data for this extension comes from the [Pokemon TCG API](pokemontcg.io).
 
 You can pull up this extension while watching TCG match videos and read card descriptions without navigating to another window or tab.
 Hotkey this extension for ease of use.
-
-## Screenshots
-
-![](https://github.com/Aniki219/pokemon-tcg-lookup/raw/main/public/screenshots/Usage.png)
 
 ## Installation
 
@@ -35,3 +33,7 @@ Example searches:
  - `Radiant Charizard`: returns two of the same card with different art.
  - `Char`: returns 55 hits for different cards `Charjabug`, `Giovanni's Charisma`, `Bravery Charm`, `Radiant Charizard`, etc...
  - `Vmax` returns all VMax Pokemon.
+
+### Usage Example:
+
+![](https://github.com/Aniki219/pokemon-tcg-lookup/raw/main/public/screenshots/Usage.png)

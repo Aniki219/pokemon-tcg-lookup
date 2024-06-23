@@ -1,6 +1,6 @@
 # Pokemon TCG Card Lookup
 
-![](https://github.com/Aniki219/pokemon-tcg-lookup/raw/main/public/screenshots/Window.png)
+![](https://github.com/Aniki219/pokemon-tcg-lookup/blobl/main/public/screenshots/Window.png)
 
 A Chrome extension which allows you to quickly and easily lookup any card in Standard play and read it's text.
 The data for this extension comes from the [Pokemon TCG API](pokemontcg.io).

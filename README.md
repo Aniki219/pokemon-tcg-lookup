@@ -8,8 +8,6 @@ Hotkey this extension for ease of use.
 
 ## Screenshots
 
-![](https://github.com/Aniki219/pokemon-tcg-lookup/raw/main/public/screenshots/Window.png | width=600)
-
 ![](https://github.com/Aniki219/pokemon-tcg-lookup/raw/main/public/screenshots/Usage.png | width=640)
 
 ## Installation

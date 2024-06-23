@@ -8,22 +8,12 @@ import CardDisplayFrame from "./components/CardDisplayFrame";
 import "./styles.css"
 
 const Popup = () => {
-    const [cardNames, setCardNames] = useState<string[]>([])
-
-    const [check, setCheck] = useState(false);
-    const [apiKey, setAPIKey] = useState<string>()
-
-    useEffect(() => {
-        chrome.storage.sync.get(
-            "apiKey",
-            (data) => {
-                setAPIKey(data.apiKey);
-            }
-        );
-    }, []);
+    const [cardNames, setCardNames] = useState<string[]>([]);
+    const [fetchingReason, setFetchingReason] = useState("Initializing Card Data");
+    const [status, setStatus] = useState<string>();
 
     useEffect(() => {
-        chrome.storage.local.get(["cardNames"], (data) => {
+        chrome.storage.local.get("cardNames", (data) => {
             const { cardNames } = data;
             if (cardNames && cardNames.length > 0) {
                 setCardNames(cardNames);
@@ -33,7 +23,7 @@ const Popup = () => {
                 resyncCardNames();
             }
         })
-    }, [apiKey]);
+    }, []);
 
     const [fetchingAllCardNames, setFetchingAllCardNames] = useState(false);
     const [pagesLoaded, setPagesLoaded] =
@@ -42,6 +32,7 @@ const Popup = () => {
     const getAllStandardCardNames = async (totalPages: number) => {
         setFetchingAllCardNames(true);
         var loaded = 0;
+        setPagesLoaded({ loaded: 0, totalPages });
 
         const promises = (new Array(totalPages)).fill(0).map((_, i) => {
             return new Promise<CardResults>((resolve) => {
@@ -50,7 +41,7 @@ const Popup = () => {
                     .then(resp => resp.json())
                     .then(function (res: CardResults) {
                         loaded++;
-                        setPagesLoaded({ ...pagesLoaded, loaded });
+                        setPagesLoaded({ loaded, totalPages });
                         return resolve(res);
                     });
             })
@@ -60,18 +51,20 @@ const Popup = () => {
             promises
         )
             .then((cardData: CardResults[]) => {
-                console.log("promiseAll: ", cardData);
                 const pagesData = cardData.map(page => {
                     if (page && page.data) {
                         return page.data;
                     }
                     return [] as Card[];
                 }); //Card[][]
+
                 const names = pagesData.flat().map(data => data.name);
                 const uniqueNames = Array.from(new Set(names));
-                const alphabetizedNames = uniqueNames.sort((a, b) => (a > b) ? 1 : -1)
+                const alphabetizedNames = uniqueNames.sort((a, b) => (a > b) ? 1 : -1);
+
                 chrome.storage.local.set({ "cardNames": alphabetizedNames });
                 setCardNames(alphabetizedNames);
+
                 setFetchingAllCardNames(false);
                 setStatus("Finished Syncing");
                 setTimeout(() => {
@@ -79,49 +72,59 @@ const Popup = () => {
                 }, 4000);
             });
     }
-    const resyncCardNames = async () => fetchAllCardNames();
-    const checkForNewSet = async () => fetchAllCardNames(true);
 
-    const fetchAllCardNames = async (onlyIfNewSetExists = false) => {
-        setStatus("Checking for latest set...");
-        chrome.storage.local.get(["currentSet"], async (set) => {
-            const { currentSet } = set;
-            const url = `https://api.pokemontcg.io/v2/sets?q=legalities.standard:legal`;
-            fetch(url)
-                .then(resp => resp.json())
-                .then(function (setsData: { data: { name: string, total: number }[] }) {
-                    const latestSet = setsData.data.at(-1)?.name as string;
-                    const totalCards = setsData.data
-                        .map(d => d.total)
-                        .reduce((a, b) => a + b, 0);
-                    const totalPages = Math.ceil(totalCards / 250);
-                    setPagesLoaded({ ...pagesLoaded, totalPages });
-                    if (currentSet !== latestSet || !onlyIfNewSetExists) {
-                        chrome.storage.local.set({ "currentSet": latestSet });
-                        if (currentSet !== latestSet) {
-                            setFetchingReason("Fetching new set " + latestSet);
-                        } else {
-                            setFetchingReason("Resyncing card names up to set: " + latestSet);
-                        }
-                        getAllStandardCardNames(totalPages);
-                    } else {
-                        setStatus("")
-                    }
-                });
-        });
+    const checkForNewSet = async () => {
+        setStatus("Checking for new Set Data");
+
+        const currentSet = await fetchCurrentSetFromLocalStorage();
+        const standardSets = await fetchSetData();
+        const latestSet = standardSets.at(-1)?.name;
+
+        if (currentSet !== latestSet) {
+            updateToLatestSet(standardSets);
+        } else {
+            setStatus("");
+        }
     }
 
-    const [fetchingReason, setFetchingReason] = useState("Initializing Card Data");
-    const [status, setStatus] = useState<string>();
-    const [showStatusBar, setShowStatusBar] = useState(false);
+    const resyncCardNames = async () => {
+        setStatus("Resyncing card name data...");
+        const standardSets = await fetchSetData();
+        await updateToLatestSet(standardSets);
+    }
 
-    useEffect(() => {
-        if (status && status.length > 0) {
-            setShowStatusBar(true);
-        } else {
-            setShowStatusBar(false);
-        }
-    }, [status])
+    const fetchCurrentSetFromLocalStorage = async (): Promise<string | undefined> => {
+        const currentSet = await chrome.storage.local.get("currentSet");
+        return currentSet.currentSet as string | undefined;
+    }
+
+    interface SetData {
+        name: string,
+        total: number
+    }
+
+    const fetchSetData = async (): Promise<SetData[]> => {
+        const url = `https://api.pokemontcg.io/v2/sets?q=legalities.standard:legal`;
+        return await fetch(url)
+            .then(resp => resp.json())
+            .then(function (setsData: { data: SetData[] }) {
+                return setsData.data;
+            });
+    }
+
+    const updateToLatestSet = async (setsData: SetData[]) => {
+        const latestSet = setsData.at(-1)?.name as string;
+        const totalCards = setsData
+            .map(d => d.total)
+            .reduce((a, b) => a + b, 0);
+        const totalPages = Math.ceil(totalCards / 250);
+
+        setFetchingReason("Fetching new set " + latestSet);
+        chrome.storage.local.set({ "currentSet": latestSet }); //TODO: move?
+
+        return await getAllStandardCardNames(totalPages);
+    }
+
 
     const showFetchStatus = () => {
         if (fetchingAllCardNames) {
@@ -140,18 +143,12 @@ const Popup = () => {
         }
     }
 
-    if (!cardNames || cardNames.length === 0) {
-        return <>
-            <p>Fetching Card Names...</p>
-        </>
-    } else {
-        return (
-            <div style={{ minHeight: "200px" }}>
-                <CardDisplayFrame cardNames={cardNames} resync={resyncCardNames}></CardDisplayFrame>
-                {showFetchStatus()}
-            </div>
-        )
-    }
+    return (
+        <div style={{ minHeight: "200px" }}>
+            <CardDisplayFrame cardNames={cardNames} resync={resyncCardNames}></CardDisplayFrame>
+            {showFetchStatus()}
+        </div>
+    )
 };
 
 const root = createRoot(document.getElementById("root")!);

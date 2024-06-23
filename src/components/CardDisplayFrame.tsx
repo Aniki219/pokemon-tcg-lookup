@@ -17,7 +17,7 @@ export default function CardDisplayFrame(props: React.PropsWithChildren<ICardDis
     const { cardNames } = props;
 
     const getCardData = async (name: string) => {
-        const url = `https://api.pokemontcg.io/v2/cards?q=legalities.standard:legal name:"${name}"`;
+        const url = `https://api.pokemontcg.io/v2/cards?q=legalities.standard:legal name:"${name}*"`;
         fetch(url, {
             method: "GET",
             headers: {

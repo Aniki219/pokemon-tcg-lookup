@@ -36,4 +36,4 @@ Example searches:
 
 ### Usage Example:
 
-![](https://github.com/Aniki219/pokemon-tcg-lookup/raw/main/public/screenshots/Usage.png)
+<img src="https://github.com/Aniki219/pokemon-tcg-lookup/raw/main/public/screenshots/Usage.png" width="640">

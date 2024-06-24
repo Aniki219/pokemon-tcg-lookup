@@ -21,6 +21,8 @@ Optionally, go to `Keyboard Shortcuts` and add a shortcut such as `Alt+P` to ope
 
 ### Usage
 
+<img src="https://github.com/Aniki219/pokemon-tcg-lookup/blob/main/public/screenshots/Landing.png" width="400">
+
 When you first open the extension it will fetch all of the card name data from the [TCG API](pokemontcg.io). This will enable auto-complete suggestions in the search bar. 
 This will only need to run once when you first open the extension, and then it will check for newly released sets and update automatically the next time you open the extension if a new set is released.
 

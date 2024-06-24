@@ -47,7 +47,7 @@ const Popup = () => {
             })
         })
 
-        Promise.all<CardResults>(
+        await Promise.all<CardResults>(
             promises
         )
             .then((cardData: CardResults[]) => {
@@ -87,10 +87,16 @@ const Popup = () => {
         }
     }
 
+    const [syncing, setSyncing] = useState(false);
     const resyncCardNames = async () => {
+        if (syncing) {
+            return;
+        }
+        setSyncing(true);
         setStatus("Resyncing card name data...");
         const standardSets = await fetchSetData();
         await updateToLatestSet(standardSets);
+        setSyncing(false);
     }
 
     const fetchCurrentSetFromLocalStorage = async (): Promise<string | undefined> => {
@@ -144,8 +150,8 @@ const Popup = () => {
     }
 
     return (
-        <div style={{ minHeight: "200px" }}>
-            <CardDisplayFrame cardNames={cardNames} resync={resyncCardNames}></CardDisplayFrame>
+        <div style={{ minHeight: "444px" }}>
+            <CardDisplayFrame cardNames={cardNames} resync={{ syncing, method: resyncCardNames }}></CardDisplayFrame>
             {showFetchStatus()}
         </div>
     )

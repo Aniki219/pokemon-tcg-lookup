@@ -7,6 +7,8 @@ export interface Card {
     weaknesses: { type: string, value: string }[],
     abilities: { name: string, text: string, type: string }[],
     attacks: { cost: string[], damage: string, name: string, text: string }[],
+    rules: string[],
+    subtypes: string[],
     images: { small: string, large: string },
 }
 

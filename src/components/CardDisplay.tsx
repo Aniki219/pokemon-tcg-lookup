@@ -1,12 +1,8 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { Card } from "../interfaces/Card"
 import "./styles/CardDisplay.css"
 
 export default function CardDisplay({ card, incrementCardIndex }: { card: Card | undefined, incrementCardIndex: (inc: number) => void }) {
-    if (!card) {
-        return <></>;
-    }
-
     const attackCostIcons = (costArray: string[]) => {
         return (
             <div className="attackCost">
@@ -17,15 +13,66 @@ export default function CardDisplay({ card, incrementCardIndex }: { card: Card |
         )
     }
 
+    const colorByType = new Map<string, string>([
+        ["Darkness", "black"],
+        ["Dragon", "gold"],
+        ["Fairy", "pink"],
+        ["Fighting", "brown"],
+        ["Fire", "red"],
+        ["Grass", "green"],
+        ["Lightning", "yellow"],
+        ["Metal", "grey"],
+        ["Psychic", "purple"],
+        ["Water", "blue"],
+    ]);
+
+    //Change background color to match card type
+    useEffect(() => {
+        if (card?.types) {
+            const type = card.types[0];
+            document.body.style.setProperty("background-color", colorByType.get(type) || "white");
+        } else {
+            document.body.style.setProperty("background-color", "white");
+        }
+    }, [card]);
+
+    if (!card) {
+        return (
+            <div style={{ display: "flex" }}>
+                <div style={{ textAlign: "center", width: "54%", marginBottom: "10px" }} >
+                    <img src="/cardBack.png" />
+                </div>
+                <div className="cardText">
+                    <div className="noCardText">
+                        <p style={{ textAlign: "center" }}>Enter a Card name in the Search bar above to begin.</p>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    const cardTypes = [card.types, card.subtypes]
+        .filter(t => t?.length > 0)
+        .flat();
     return (
         <div style={{ display: "flex" }}>
-            <div style={{ textAlign: "center", width: "54%", marginBottom: "10px" }} >
+            <div className="cardImage" >
                 <img src={card.images.small} />
             </div>
             <div className="cardText">
+                <div className="cardHeading">
+                    <h2>{card.name}</h2>
+                    <div className="subtypes">
+                        <ul>
+                            {cardTypes.map((subtype, i) => {
+                                return <li key={i}>[{subtype}]</li>
+                            })}
+                        </ul>
+                    </div>
+                </div>
                 <ul>
-                    {card.abilities?.map(ability => {
-                        return <li className="ability">
+                    {card.abilities?.map((ability, i) => {
+                        return <li key={i} className="ability">
                             <h2>{ability.name}</h2>
                             <div className="abilityLabel">{ability.type}</div>
                             <p>{ability.text}</p>
@@ -33,8 +80,8 @@ export default function CardDisplay({ card, incrementCardIndex }: { card: Card |
                     })}
                 </ul>
                 <ul>
-                    {card.attacks?.map(attack => {
-                        return <li className="attack">
+                    {card.attacks?.map((attack, i) => {
+                        return <li key={i} className="attack">
                             <h2>
                                 <div className="attackName">
                                     {attack.name}
@@ -46,6 +93,19 @@ export default function CardDisplay({ card, incrementCardIndex }: { card: Card |
                             {attackCostIcons(attack.cost)}
                             <p>{attack.text}</p>
                         </li>
+                    })}
+                </ul>
+                {(card.abilities?.length > 0 || card.attacks?.length > 0 ? <hr /> : null)}
+                <ul>
+                    {card.rules?.map((rule, i) => {
+                        return (
+                            <>
+                                {(i === 1 && !card.abilities && !card.attacks ? <hr /> : null)}
+                                <li key={i} className="ability">
+                                    <p>{rule}</p>
+                                </li>
+                            </>
+                        )
                     })}
                 </ul>
             </div>

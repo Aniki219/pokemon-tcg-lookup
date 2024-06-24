@@ -8,15 +8,24 @@ i {
     margin: 4px
 }
 
+.cardImage {
+    text-align: center;
+    width: 45%;
+    margin-bottom: 10px;
+    margin-left: 2%;
+}
+
 .cardText {
-    width: 46%;
-    scrollbar-width: thin;
     overflow-y: auto;
+    overflow-x: hidden;
     /*Exact Card Height*/
     max-height: 342px;
     color: white;
     background: #00000047;
     border-radius: 10px;
+    margin-right: 2%;
+    margin-left: 2%;
+    width: 58%;
 }
 
 .cardText ul {
@@ -34,6 +43,12 @@ i {
     margin-bottom: 20px;
 }
 
+.cardText hr {
+    margin: 0;
+    margin-left: 4%;
+    margin-right: 6%;
+}
+
 .ability p {
     font-style: italic;
 }
@@ -44,6 +59,7 @@ i {
     font-weight: 600;
     text-shadow: 0px 0px 5px #ff0000;
     font-size: 14px;
+    margin-left: 2%;
 }
 
 .attackName {
@@ -55,4 +71,44 @@ i {
     width: 18%;
     text-align: right;
     display: inline-block;
+}
+
+.noCardText {
+    height: 100%;
+    position: relative;
+}
+
+.noCardText p {
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    padding-bottom: 20px;
+}
+
+.cardHeading {
+    display: flex;
+    flex-direction: row;
+    margin: 0 5%;
+    position: relative;
+}
+
+.cardHeading h2 {
+    width: 70%;
+}
+
+.subtypes {
+    position: absolute;
+    right: 0;
+}
+
+.subtypes ul {
+    margin: 0;
+    margin-top: 5%;
+    text-align: right;
+    padding-left: 0;
+}
+
+.subtypes li {
+    margin: 0;
 }

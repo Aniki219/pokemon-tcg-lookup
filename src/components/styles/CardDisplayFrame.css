@@ -1,13 +1,46 @@
 .navbar {
     font-size: 16px;
+    height: 25px;
+    margin-bottom: 10px;
+    display: block;
+    color: white;
+    text-shadow: 1px 1px black;
 }
+
 
 .navbar button {
     background: none;
     border: none;
     font-size: 24px;
+    vertical-align: middle;
 }
 
 .navbar button:hover {
-    color: red;
+    color: rgb(255, 255, 255);
+}
+
+.navbar span {
+    vertical-align: middle;
+}
+
+.resyncButton {
+    color: rgb(255 203 110);
+    background: none;
+    border: none;
+    font-size: 20px;
+    font-weight: bolder;
+    vertical-align: bottom;
+    text-shadow: 1px 1px 4px #404040;
+}
+
+.resyncButton:hover {
+    color: rgb(253, 226, 178);
+}
+
+form input {
+    margin: 3px;
+    font-family: system-ui;
+    background-color: #ffffffad;
+    border-radius: 6px;
+    border-color: white;
 }

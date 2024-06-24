@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CardDisplay from "./CardDisplay";
 import { Card, CardResults } from "../interfaces/Card";
 import process from "process";
@@ -6,7 +6,7 @@ import "./styles/CardDisplayFrame.css"
 
 interface ICardDisplayFrameProps {
     cardNames: string[],
-    resync: () => Promise<void>
+    resync: { syncing: boolean, method: () => Promise<void> }
 }
 
 export default function CardDisplayFrame(props: React.PropsWithChildren<ICardDisplayFrameProps>) {
@@ -16,9 +16,11 @@ export default function CardDisplayFrame(props: React.PropsWithChildren<ICardDis
 
     const { cardNames } = props;
 
+    const [searching, setSearching] = useState(false);
+
     const getCardData = async (name: string) => {
         const url = `https://api.pokemontcg.io/v2/cards?q=legalities.standard:legal name:"${name}*"`;
-        fetch(url, {
+        return await fetch(url, {
             method: "GET",
             headers: {
                 "X-Auth-Token": process.env.POKEMON_SECRET as string
@@ -44,7 +46,20 @@ export default function CardDisplayFrame(props: React.PropsWithChildren<ICardDis
     }
 
     const showIndex = () => {
-        if (!cardData) return <></>
+        if (!cardData) {
+            return (
+                <span className="navbar"></span>
+            )
+        }
+
+        if (cardData.data.length === 0) {
+            return (
+                <span className="navbar">
+                    <p>No card data found!</p>
+                </span>
+            )
+        }
+
         return (
             <span className="navbar">
                 <button onClick={() => { incrementCardIndex(-1) }}>🠜</button>
@@ -58,9 +73,15 @@ export default function CardDisplayFrame(props: React.PropsWithChildren<ICardDis
 
     const [name, setName] = useState("");
 
-    const handleSubmit = (event: React.FormEvent<EventTarget | HTMLFormElement>) => {
+    const handleSubmit = async (event: React.FormEvent<EventTarget | HTMLFormElement>) => {
         event.preventDefault();
-        getCardData(name)
+
+        if (searching) {
+            return;
+        }
+        setSearching(true);
+        await getCardData(name);
+        setSearching(false);
     }
 
     const getCardListOptions = () => {
@@ -93,11 +114,15 @@ export default function CardDisplayFrame(props: React.PropsWithChildren<ICardDis
                             type="text"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            style={{ margin: "3px" }}
                         />
                         {getCardListOptions()}
-                        <input type="submit" className="search" value="Search" />
-                        <button onClick={(e) => { e.preventDefault(); props.resync(); }} title="Re-Fetch card names data. (Paginated request takes about 2 minutes).">ReSync</button>
+                        <input type="submit" className="search" value="Search" disabled={searching} />
+                        <button onClick={(e) => { e.preventDefault(); props.resync.method(); }}
+                            title="Re-Fetch card names data."
+                            className="resyncButton"
+                            aria-disabled={props.resync.syncing}>
+                            {!props.resync.syncing ? "⟳" : <img src="/icons/loading/roller.gif" style={{ width: "20px" }}></img>}
+                        </button>
 
                     </form>
                 </div>

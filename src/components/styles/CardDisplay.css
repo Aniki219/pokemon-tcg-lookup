@@ -89,18 +89,17 @@ i {
 .cardHeading {
     display: flex;
     flex-direction: row;
-    margin: 0 5%;
+    margin: 2% 5%;
     position: relative;
+    justify-content: space-between;
 }
 
 .cardHeading h2 {
     width: 70%;
+    margin: 0;
 }
 
-.subtypes {
-    position: absolute;
-    right: 0;
-}
+
 
 .subtypes ul {
     margin: 0;

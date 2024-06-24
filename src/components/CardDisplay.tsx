@@ -14,16 +14,16 @@ export default function CardDisplay({ card, incrementCardIndex }: { card: Card |
     }
 
     const colorByType = new Map<string, string>([
-        ["Darkness", "black"],
-        ["Dragon", "gold"],
-        ["Fairy", "pink"],
-        ["Fighting", "brown"],
-        ["Fire", "red"],
+        ["Darkness", "#5a4862"],
+        ["Dragon", "#e0c28b"],
+        ["Fairy", "#892752"],
+        ["Fighting", "#e9a983"],
+        ["Fire", "#ff8737"],
         ["Grass", "green"],
-        ["Lightning", "yellow"],
-        ["Metal", "grey"],
-        ["Psychic", "purple"],
-        ["Water", "blue"],
+        ["Lightning", "#ffd804"],
+        ["Metal", "#314459"],
+        ["Psychic", "#be74d0"],
+        ["Water", "#72a0d8"],
     ]);
 
     //Change background color to match card type

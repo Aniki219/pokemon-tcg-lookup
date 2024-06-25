@@ -4,7 +4,7 @@
 
 <img src="https://github.com/Aniki219/pokemon-tcg-lookup/blob/main/public/screenshots/Window.png" width="400">
 
-A Chrome extension which allows you to quickly and easily lookup any card in Standard play and read it's text.
+Nidoran is a Chrome extension which allows you to quickly and easily lookup any card in Standard play and read it's text.
 The data for this extension comes from the [Pokemon TCG API](pokemontcg.io).
 
 You can pull up this extension while watching TCG match videos and read card descriptions without navigating to another window or tab.

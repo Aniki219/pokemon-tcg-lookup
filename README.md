@@ -1,4 +1,4 @@
-<img src="https://github.com/Aniki219/pokemon-tcg-lookup/blob/main/public/screenshots/Marquee.png">
+<img src="https://github.com/Aniki219/pokemon-tcg-lookup/blob/main/public/screenshots/marquee.png">
 # Pokemon TCG Card Lookup
 
 <img src="https://github.com/Aniki219/pokemon-tcg-lookup/blob/main/public/screenshots/Window.png" width="400">

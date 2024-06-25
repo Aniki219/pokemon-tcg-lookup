@@ -1,4 +1,7 @@
+<div style="text-align: center;
+    background-color: #404040;">
 <img src="https://github.com/Aniki219/pokemon-tcg-lookup/blob/main/public/screenshots/marquee.png" height="150px">
+</div>
 
 # Nidoran - Pokemon TCG Card Lookup
 

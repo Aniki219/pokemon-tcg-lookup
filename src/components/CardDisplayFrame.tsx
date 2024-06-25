@@ -102,7 +102,7 @@ export default function CardDisplayFrame(props: React.PropsWithChildren<ICardDis
     return (
         <div>
             <div style={{ minWidth: "500px", textAlign: "center" }}>
-                <h2>Pokemon TCG Lookup:</h2>
+                <h2>Nidoran TCG Lookup:</h2>
                 <div>
                     <form onSubmit={(e) => { handleSubmit(e) }}>
                         <label style={{ fontSize: "16px" }}>

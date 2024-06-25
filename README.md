@@ -1,6 +1,6 @@
 <img src="https://github.com/Aniki219/pokemon-tcg-lookup/blob/main/public/screenshots/marquee.png" height="150px">
 
-# Pokemon TCG Card Lookup
+# Nidoran - Pokemon TCG Card Lookup
 
 <img src="https://github.com/Aniki219/pokemon-tcg-lookup/blob/main/public/screenshots/Window.png" width="400">
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import CardDisplay from "./CardDisplay";
+import CardDisplay from "./CardDisplay/CardDisplay";
 import { Card, CardResults } from "../interfaces/Card";
 import process from "process";
 import "./styles/CardDisplayFrame.css"
@@ -27,10 +27,35 @@ export default function CardDisplayFrame(props: React.PropsWithChildren<ICardDis
             }
         })
             .then(resp => resp.json())
-            .then(function (cardData: CardResults) {
-                setCardData(cardData);
+            .then(function (cardResults: CardResults) {
+                const cardDataByName = new Map<string, Card[]>();
+                const cards = cardResults.data;
+
+                cards.forEach(card => {
+                    const name = card.name;
+                    if (!cardDataByName.has(name)) {
+                        cardDataByName.set(name, []);
+                    }
+                    cardDataByName.get(name)?.push(card);
+                });
+
+                const sortedNames = Array.from(cardDataByName.keys()).sort((a, b) => {
+                    return a.length > b.length ? 1 : -1;
+                })
+
+                for (const name of sortedNames) {
+                    const cardsArray = cardDataByName.get(name);
+                    if (!cardsArray) continue;
+                    cardsArray.sort((a, b) => {
+                        return a.set.releaseDate > b.set.releaseDate ? -1 : 1;
+                    });
+                }
+
+                cardResults.data = Array.from(cardDataByName.values()).flat();
+
+                setCardData(cardResults);
                 setCardIndex(0);
-                setCurrentCard(cardData.data[0]);
+                setCurrentCard(cardResults.data[0]);
             });
     }
 
@@ -105,7 +130,7 @@ export default function CardDisplayFrame(props: React.PropsWithChildren<ICardDis
                 <h2>Nidoran TCG Lookup:</h2>
                 <div>
                     <form onSubmit={(e) => { handleSubmit(e) }}>
-                        <label style={{ fontSize: "16px" }}>
+                        <label style={{ fontSize: "16px", color: "white", textShadow: "1px 1px black" }}>
                             Card Name:
                         </label>
                         <input

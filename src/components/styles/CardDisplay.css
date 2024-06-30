@@ -1,4 +1,5 @@
 h2,
+h3,
 p,
 i {
     margin: 4px
@@ -15,17 +16,38 @@ i {
     margin-left: 2%;
 }
 
-.cardText {
-    overflow-y: auto;
-    overflow-x: hidden;
-    /*Exact Card Height*/
+.cardInfo {
+    display: flex;
+    flex-flow: column;
+    height: 342px;
+}
+
+.noCardText {
     max-height: 342px;
     color: white;
     background: #00000047;
+    height: 100%;
+    border: 1px solid black;
     border-radius: 10px;
-    margin-right: 2%;
-    margin-left: 2%;
-    width: 58%;
+    position: relative;
+}
+
+.noCardText p {
+    text-align: center;
+    width: 70%;
+    margin-left: 15%;
+    font-size: 16px;
+}
+
+.cardText {
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 342px;
+    color: white;
+    background: #00000047;
+    height: 77%;
+    border: 1px solid black;
+    flex: 1;
 }
 
 .cardText ul {
@@ -89,9 +111,12 @@ i {
 .cardHeading {
     display: flex;
     flex-direction: row;
-    margin: 2% 5%;
+    padding: 2% 5%;
     position: relative;
     justify-content: space-between;
+    color: white;
+    border-radius: 10px 10px 0 0;
+    background: #0000008f;
 }
 
 .cardHeading h2 {
@@ -100,14 +125,66 @@ i {
 }
 
 
+.subtypes {
+    margin: 10px;
+    background-color: #00000070;
+    border-radius: 6px;
+    padding: 2px;
+}
 
 .subtypes ul {
-    margin: 0;
-    margin-top: 5%;
-    text-align: right;
-    padding-left: 0;
+    display: inline;
+    list-style: none;
 }
 
 .subtypes li {
-    margin: 0;
+    display: inline;
+}
+
+.subtypes li+li:before {
+    content: ", ";
+}
+
+.cardInfo {
+    margin-left: 2%;
+    margin-right: 2%;
+    width: 58%;
+}
+
+.setInfo {
+    background: #0000008c;
+    color: white;
+    width: 100%;
+    border-radius: 0 0 10px 10px;
+    text-align: right;
+    height: 24px;
+}
+
+.setInfo img {
+    width: 20px;
+    vertical-align: middle;
+    display: inline;
+    margin: 0px 5px;
+}
+
+.setInfo #set {
+    display: inline;
+    margin-right: 10px;
+    padding-bottom: 10px;
+    cursor: default;
+}
+
+.cardHeading #hp {
+    display: inline;
+    text-align: right;
+}
+
+.cardHeading .types div {
+    display: inline-block;
+    position: absolute;
+    right: 2%;
+}
+
+.cardHeading .types {
+    width: 22%;
 }

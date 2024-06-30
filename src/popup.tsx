@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { Card, CardResults } from "./interfaces/Card";
-import CardDisplay from "./components/CardDisplay";
+import CardDisplay from "./components/CardDisplay/CardDisplay";
 import process from "process";
 import { render } from "react-dom";
 import CardDisplayFrame from "./components/CardDisplayFrame";
@@ -136,7 +136,10 @@ const Popup = () => {
         if (fetchingAllCardNames) {
             return (
                 <div className="statusBar">
-                    <p>{fetchingReason} {pagesLoaded.totalPages > 0 ? `${pagesLoaded.loaded} / ${pagesLoaded.totalPages}` : ""}...</p>
+                    <p>
+                        {fetchingReason}
+                        {pagesLoaded.totalPages > 0 ? `... ${Math.floor(100 * pagesLoaded.loaded / pagesLoaded.totalPages)}%` : "..."}
+                    </p>
                 </div>
             )
         }

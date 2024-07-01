@@ -3,10 +3,19 @@ import CardDisplay from "./CardDisplay/CardDisplay";
 import { Card, CardResults } from "../interfaces/Card";
 import process from "process";
 import "./styles/CardDisplayFrame.css"
+import SearchOptions from "./SearchOptions";
 
 interface ICardDisplayFrameProps {
     cardNames: string[],
+    setNames: string[],
     resync: { syncing: boolean, method: () => Promise<void> }
+}
+
+export interface SearchParams {
+    name: string,
+    standard: boolean,
+    exact: boolean,
+    set: string
 }
 
 export default function CardDisplayFrame(props: React.PropsWithChildren<ICardDisplayFrameProps>) {
@@ -17,6 +26,11 @@ export default function CardDisplayFrame(props: React.PropsWithChildren<ICardDis
     const { cardNames } = props;
 
     const [searching, setSearching] = useState(false);
+
+    const [searchParams, setSearchParams] = useState<SearchParams>({ name: "", exact: false, standard: true, set: "All Sets" });
+    const getSearchParams = () => {
+        return searchParams;
+    }
 
     const getCardData = async (name: string) => {
         const url = `https://api.pokemontcg.io/v2/cards?q=legalities.standard:legal name:"${name}*"`;
@@ -96,8 +110,6 @@ export default function CardDisplayFrame(props: React.PropsWithChildren<ICardDis
         )
     }
 
-    const [name, setName] = useState("");
-
     const handleSubmit = async (event: React.FormEvent<EventTarget | HTMLFormElement>) => {
         event.preventDefault();
 
@@ -105,9 +117,13 @@ export default function CardDisplayFrame(props: React.PropsWithChildren<ICardDis
             return;
         }
         setSearching(true);
-        await getCardData(name);
+        await getCardData(searchParams.name);
         setSearching(false);
     }
+
+    useEffect(() => {
+        console.log(searchParams);
+    }, [searchParams]);
 
     const getCardListOptions = () => {
         if (!cardNames) {
@@ -127,7 +143,7 @@ export default function CardDisplayFrame(props: React.PropsWithChildren<ICardDis
     return (
         <div>
             <div style={{ minWidth: "500px", textAlign: "center" }}>
-                <h2>Nidoran TCG Lookup:</h2>
+                <h2 style={{ color: "white" }}>Nidoran TCG Lookup:</h2>
                 <div>
                     <form onSubmit={(e) => { handleSubmit(e) }}>
                         <label style={{ fontSize: "16px", color: "white", textShadow: "1px 1px black" }}>
@@ -137,8 +153,8 @@ export default function CardDisplayFrame(props: React.PropsWithChildren<ICardDis
                             list="cardName"
                             autoFocus={true}
                             type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
+                            value={searchParams.name}
+                            onChange={(e) => setSearchParams({ ...searchParams, name: e.target.value })}
                         />
                         {getCardListOptions()}
                         <input type="submit" className="search" value="Search" disabled={searching} />
@@ -148,9 +164,9 @@ export default function CardDisplayFrame(props: React.PropsWithChildren<ICardDis
                             aria-disabled={props.resync.syncing}>
                             {!props.resync.syncing ? "⟳" : <img src="/icons/loading/roller.gif" style={{ width: "20px" }}></img>}
                         </button>
-
                     </form>
                 </div>
+                <SearchOptions setNames={props.setNames} setSearchParams={setSearchParams} getSearchParams={getSearchParams} />
                 {showIndex()}
             </div>
             <CardDisplay card={currentCard} incrementCardIndex={incrementCardIndex}></CardDisplay>

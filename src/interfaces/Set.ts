@@ -3,7 +3,8 @@ export interface CardSet {
     series: string,
     ptcgoCode: string,
     releaseDate: string,
-    images: CardSetImages
+    images: CardSetImages,
+    total: number
 }
 
 export interface CardSetImages {

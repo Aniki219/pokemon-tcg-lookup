@@ -188,3 +188,20 @@ i {
 .cardHeading .types {
     width: 22%;
 }
+
+.searchOptions {
+    display: flex;
+    justify-content: center;
+}
+
+.searchOptions ul {
+    display: flex;
+    padding: 0;
+    justify-content: space-evenly;
+    width: 80%;
+    color: white;
+}
+
+.searchOptions li {
+    display: inline;
+}

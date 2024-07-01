@@ -6,9 +6,11 @@ import process from "process";
 import { render } from "react-dom";
 import CardDisplayFrame from "./components/CardDisplayFrame";
 import "./styles.css"
+import { CardSet } from "./interfaces/Set";
 
 const Popup = () => {
     const [cardNames, setCardNames] = useState<string[]>([]);
+    const [setNames, setSetNames] = useState<string[]>([]);
     const [fetchingReason, setFetchingReason] = useState("Initializing Card Data");
     const [status, setStatus] = useState<string>();
 
@@ -87,6 +89,19 @@ const Popup = () => {
         }
     }
 
+    const fetchSetData = async (): Promise<CardSet[]> => {
+        const url = `https://api.pokemontcg.io/v2/sets?q=legalities.standard:legal`;
+        return await fetch(url)
+            .then(res => res.json())
+            .then((setsData: { data: CardSet[] }) => {
+                const names = setsData.data.map(d => {
+                    return d.name;
+                });
+                setSetNames(names);
+                return setsData.data;
+            })
+    }
+
     const [syncing, setSyncing] = useState(false);
     const resyncCardNames = async () => {
         if (syncing) {
@@ -104,21 +119,7 @@ const Popup = () => {
         return currentSet.currentSet as string | undefined;
     }
 
-    interface SetData {
-        name: string,
-        total: number
-    }
-
-    const fetchSetData = async (): Promise<SetData[]> => {
-        const url = `https://api.pokemontcg.io/v2/sets?q=legalities.standard:legal`;
-        return await fetch(url)
-            .then(resp => resp.json())
-            .then(function (setsData: { data: SetData[] }) {
-                return setsData.data;
-            });
-    }
-
-    const updateToLatestSet = async (setsData: SetData[]) => {
+    const updateToLatestSet = async (setsData: CardSet[]) => {
         const latestSet = setsData.at(-1)?.name as string;
         const totalCards = setsData
             .map(d => d.total)
@@ -154,7 +155,10 @@ const Popup = () => {
 
     return (
         <div style={{ minHeight: "444px" }}>
-            <CardDisplayFrame cardNames={cardNames} resync={{ syncing, method: resyncCardNames }}></CardDisplayFrame>
+            <CardDisplayFrame
+                cardNames={cardNames}
+                setNames={setNames}
+                resync={{ syncing, method: resyncCardNames }} />
             {showFetchStatus()}
         </div>
     )

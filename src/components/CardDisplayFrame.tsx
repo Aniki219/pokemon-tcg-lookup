@@ -7,7 +7,7 @@ import SearchOptions from "./SearchOptions";
 
 interface ICardDisplayFrameProps {
     cardNames: string[],
-    setNames: string[],
+    setNames: { legal: string[], all: string[] }
     resync: { syncing: boolean, method: () => Promise<void> }
 }
 
@@ -27,13 +27,17 @@ export default function CardDisplayFrame(props: React.PropsWithChildren<ICardDis
 
     const [searching, setSearching] = useState(false);
 
-    const [searchParams, setSearchParams] = useState<SearchParams>({ name: "", exact: false, standard: true, set: "All Sets" });
+    const [searchParams, setSearchParams] = useState<SearchParams>({ name: "", exact: false, standard: true, set: "Any" });
     const getSearchParams = () => {
         return searchParams;
     }
 
-    const getCardData = async (name: string) => {
-        const url = `https://api.pokemontcg.io/v2/cards?q=legalities.standard:legal name:"${name}*"`;
+    const getCardData = async () => {
+        const legalities = searchParams.standard ? "legalities.standard:legal" : "";
+        const { name } = searchParams;
+        const set = searchParams.set === "Any" ? "" : `set.name:"${searchParams.set}"`;
+        const exact = searchParams.exact ? "" : "*"
+        const url = `https://api.pokemontcg.io/v2/cards?q=${legalities} ${set} name:"${name}${exact}"`;
         return await fetch(url, {
             method: "GET",
             headers: {
@@ -117,13 +121,9 @@ export default function CardDisplayFrame(props: React.PropsWithChildren<ICardDis
             return;
         }
         setSearching(true);
-        await getCardData(searchParams.name);
+        await getCardData();
         setSearching(false);
     }
-
-    useEffect(() => {
-        console.log(searchParams);
-    }, [searchParams]);
 
     const getCardListOptions = () => {
         if (!cardNames) {

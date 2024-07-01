@@ -162,6 +162,7 @@ i {
 
 .setInfo img {
     width: 20px;
+    max-height: 20px;
     vertical-align: middle;
     display: inline;
     margin: 0px 5px;

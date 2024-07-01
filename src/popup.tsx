@@ -10,7 +10,7 @@ import { CardSet } from "./interfaces/Set";
 
 const Popup = () => {
     const [cardNames, setCardNames] = useState<string[]>([]);
-    const [setNames, setSetNames] = useState<string[]>([]);
+    const [setNames, setSetNames] = useState<{ legal: string[], all: string[] }>({ legal: [], all: [] });
     const [fetchingReason, setFetchingReason] = useState("Initializing Card Data");
     const [status, setStatus] = useState<string>();
 
@@ -31,21 +31,26 @@ const Popup = () => {
     const [pagesLoaded, setPagesLoaded] =
         useState<{ loaded: number, totalPages: number }>({ loaded: 0, totalPages: 0 });
 
-    const getAllStandardCardNames = async (totalPages: number) => {
+    const getAllCardNames = async (totalPages: number) => {
         setFetchingAllCardNames(true);
         var loaded = 0;
         setPagesLoaded({ loaded: 0, totalPages });
 
         const promises = (new Array(totalPages)).fill(0).map((_, i) => {
             return new Promise<CardResults>((resolve) => {
-                const url = `https://api.pokemontcg.io/v2/cards?page=${i + 1}&q=legalities.standard:legal`;
-                fetch(url)
-                    .then(resp => resp.json())
-                    .then(function (res: CardResults) {
-                        loaded++;
-                        setPagesLoaded({ loaded, totalPages });
-                        return resolve(res);
-                    });
+                try {
+                    const url = `https://api.pokemontcg.io/v2/cards?page=${i + 1}&q=legalities.standard:legal`;
+                    fetch(url)
+                        .then(resp => resp.json())
+                        .then(function (res: CardResults) {
+                            loaded++;
+                            setPagesLoaded({ loaded, totalPages });
+                            return resolve(res);
+                        });
+                } catch (e) {
+                    console.error(e);
+                }
+
             })
         })
 
@@ -90,14 +95,24 @@ const Popup = () => {
     }
 
     const fetchSetData = async (): Promise<CardSet[]> => {
-        const url = `https://api.pokemontcg.io/v2/sets?q=legalities.standard:legal`;
+        const url = `https://api.pokemontcg.io/v2/sets`;
         return await fetch(url)
             .then(res => res.json())
             .then((setsData: { data: CardSet[] }) => {
-                const names = setsData.data.map(d => {
+                const all = setsData.data.map(d => {
                     return d.name;
                 });
-                setSetNames(names);
+
+                const legalSetsData = setsData.data
+                    .filter(set => {
+                        return set.legalities.standard
+                    });
+
+                const legalNames = legalSetsData.map(d => {
+                    return d.name;
+                });
+
+                setSetNames({ legal: legalNames, all });
                 return setsData.data;
             })
     }
@@ -129,7 +144,7 @@ const Popup = () => {
         setFetchingReason("Fetching new set " + latestSet);
         chrome.storage.local.set({ "currentSet": latestSet }); //TODO: move?
 
-        return await getAllStandardCardNames(totalPages);
+        return await getAllCardNames(totalPages);
     }
 
 

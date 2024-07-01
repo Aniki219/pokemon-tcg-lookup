@@ -2,16 +2,12 @@ import React, { useEffect } from "react";
 import { SearchParams } from "./CardDisplayFrame";
 
 interface SearchOptionProps {
-    setNames: string[],
+    setNames: { legal: string[], all: string[] }
     getSearchParams: () => SearchParams,
     setSearchParams: (params: SearchParams) => void
 }
 
 export default function SearchOptions(props: SearchOptionProps) {
-    useEffect(() => {
-        console.log("reloaded")
-    }, []);
-
     return (
         <div className="searchOptions">
             <ul>
@@ -19,14 +15,15 @@ export default function SearchOptions(props: SearchOptionProps) {
                     <input type="checkbox"
                         defaultChecked={true}
                         onChange={(e) => {
-                            props.setSearchParams({ ...props.getSearchParams(), standard: e.target.value === "true" })
+                            console.log(e.target)
+                            props.setSearchParams({ ...props.getSearchParams(), standard: !props.getSearchParams().standard })
                         }} />
                     Standard
                 </li>
                 <li>
                     <input type="checkbox"
                         onChange={(e) => {
-                            props.setSearchParams({ ...props.getSearchParams(), exact: e.target.value === "true" })
+                            props.setSearchParams({ ...props.getSearchParams(), exact: !props.getSearchParams().exact })
                         }} />
                     Exact Name
                 </li>
@@ -36,11 +33,12 @@ export default function SearchOptions(props: SearchOptionProps) {
                         props.setSearchParams({ ...props.getSearchParams(), set: e.target.value })
                     }}>
                         <option key={0} value="Any">Any</option>
-                        {props.setNames.map((name, i) => {
-                            return (
-                                <option key={i + 1} value={name}>{name}</option>
-                            );
-                        })}
+                        {(props.getSearchParams().standard ? props.setNames.legal : props.setNames.all)
+                            .map((name, i) => {
+                                return (
+                                    <option key={i + 1} value={name}>{name}</option>
+                                );
+                            })}
                     </select>
 
                 </li>

@@ -4,10 +4,11 @@ export interface CardSet {
     ptcgoCode: string,
     releaseDate: string,
     images: CardSetImages,
-    total: number
+    total: number,
+    legalities: { standard?: string },
 }
 
 export interface CardSetImages {
     symbol: string,
-    logo: string
+    logo: string,
 }

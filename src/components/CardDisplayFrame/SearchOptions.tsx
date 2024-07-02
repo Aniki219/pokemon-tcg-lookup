@@ -7,7 +7,7 @@ interface SearchOptionProps {
     setSearchParams: (params: SearchParams) => void
 }
 
-export default function SearchOptions(props: SearchOptionProps) {
+export default function SearchOptions({ setNames, getSearchParams, setSearchParams }: SearchOptionProps) {
     return (
         <div className="searchOptions">
             <ul>
@@ -16,24 +16,24 @@ export default function SearchOptions(props: SearchOptionProps) {
                         defaultChecked={true}
                         onChange={(e) => {
                             console.log(e.target)
-                            props.setSearchParams({ ...props.getSearchParams(), standard: !props.getSearchParams().standard })
+                            setSearchParams({ ...getSearchParams(), standard: !getSearchParams().standard })
                         }} />
                     Standard
                 </li>
                 <li>
                     <input type="checkbox"
                         onChange={(e) => {
-                            props.setSearchParams({ ...props.getSearchParams(), exact: !props.getSearchParams().exact })
+                            setSearchParams({ ...getSearchParams(), exact: !getSearchParams().exact })
                         }} />
                     Exact Name
                 </li>
                 <li>
                     Set:
                     <select id="set" onChange={(e) => {
-                        props.setSearchParams({ ...props.getSearchParams(), set: e.target.value })
+                        setSearchParams({ ...getSearchParams(), set: e.target.value })
                     }}>
                         <option key={0} value="Any">Any</option>
-                        {(props.getSearchParams().standard ? props.setNames.legal : props.setNames.all)
+                        {(getSearchParams().standard ? setNames.legal : setNames.all)
                             .map((name, i) => {
                                 return (
                                     <option key={i + 1} value={name}>{name}</option>

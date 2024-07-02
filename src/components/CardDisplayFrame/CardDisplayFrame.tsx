@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import CardDisplay from "./CardDisplay/CardDisplay";
-import { Card, CardResults } from "../interfaces/Card";
+import { Card, CardResults } from "../../types/Card";
 import process from "process";
-import "./styles/CardDisplayFrame.css"
+import "../../assets/styles/CardDisplayFrame.css"
 import SearchOptions from "./SearchOptions";
-import { pokeTypes, subtypes } from "../data";
+import { pokeTypes, subtypes } from "../../assets/data";
 import SearchForm from "./SearchForm";
+import Navbar from "./Navbar";
 
 interface ICardDisplayFrameProps {
     cardNames: string[],
@@ -21,12 +22,10 @@ export interface SearchParams {
     set: string
 }
 
-export default function CardDisplayFrame(props: React.PropsWithChildren<ICardDisplayFrameProps>) {
+export default function CardDisplayFrame({ cardNames, setNames, resync }: ICardDisplayFrameProps) {
     const [cardData, setCardData] = useState<CardResults>();
-    const [cardIndex, setCardIndex] = useState(0);
-    const [currentCard, setCurrentCard] = useState<Card>();
 
-    const { cardNames } = props;
+    const [currentCard, setCurrentCard] = useState<Card>();
 
     const [searchParams, setSearchParams] = useState<SearchParams>(
         { searchText: "", searchBy: "name", exact: false, standard: true, set: "Any" });
@@ -77,46 +76,9 @@ export default function CardDisplayFrame(props: React.PropsWithChildren<ICardDis
                 cardResults.data = Array.from(cardDataByName.values()).flat();
 
                 setCardData(cardResults);
-                setCardIndex(0);
+                // setCardIndex(0);
                 setCurrentCard(cardResults.data[0]);
             });
-    }
-
-    const incrementCardIndex = (inc: number): void => {
-        if (!cardData) {
-            setCardIndex(0);
-            return;
-        }
-
-        const index = ((cardIndex + inc) + cardData.count) % cardData.count;
-        setCardIndex(index);
-        setCurrentCard(cardData.data[index]);
-    }
-
-    const showNavbar = () => {
-        if (!cardData) {
-            return (
-                <span className="navbar"></span>
-            )
-        }
-
-        if (cardData.data.length === 0) {
-            return (
-                <span className="navbar">
-                    <p>No card data found!</p>
-                </span>
-            )
-        }
-
-        return (
-            <span className="navbar">
-                <button onClick={() => { incrementCardIndex(-1) }}>🠜</button>
-                <span style={{ marginLeft: "10px", marginRight: "10px" }}>
-                    {cardIndex + 1} / {cardData.count}
-                </span>
-                <button onClick={() => { incrementCardIndex(1) }}>🠞</button>
-            </span>
-        )
     }
 
     return (
@@ -128,14 +90,16 @@ export default function CardDisplayFrame(props: React.PropsWithChildren<ICardDis
                     getSearchParams={getSearchParams}
                     cardNames={cardNames}
                     getCardData={getCardData}
-                    resync={props.resync} />
+                    resync={resync} />
                 <SearchOptions
-                    setNames={props.setNames}
+                    setNames={setNames}
                     setSearchParams={setSearchParams}
                     getSearchParams={getSearchParams} />
-                {showNavbar()}
+                <Navbar
+                    cardData={cardData}
+                    setCurrentCard={setCurrentCard} />
             </div>
-            <CardDisplay card={currentCard} incrementCardIndex={incrementCardIndex}></CardDisplay>
+            <CardDisplay card={currentCard}></CardDisplay>
         </div>
     );
 }

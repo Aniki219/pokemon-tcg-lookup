@@ -1,13 +1,17 @@
 import React, { useEffect } from "react"
-import { Card } from "../../interfaces/Card"
-import "../styles/CardDisplay.css"
-import { getColorByType, getIconByType, isPokeType } from "../../data"
-import { getTypeIcon, getTypeIconLarge } from "../TypeIcon"
+import { Card } from "../../../types/Card"
+import "../../../assets/styles/CardDisplay.css"
+import { getColorByType, getIconByType, isPokeType } from "../../../assets/data"
+import { getTypeIcon, getTypeIconLarge } from "../../TypeIcon"
 import Header, { HeaderParams } from "./Header"
 import CardText from "./CardText"
 import Footer from "./Footer"
 
-export default function CardDisplay({ card, incrementCardIndex }: { card: Card | undefined, incrementCardIndex: (inc: number) => void }) {
+interface CardDisplayProps {
+    card: Card | undefined
+}
+
+export default function CardDisplay({ card }: CardDisplayProps) {
     //Change background color to match card type
     useEffect(() => {
         if (card?.types) {

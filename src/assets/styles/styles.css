@@ -28,7 +28,7 @@
     bottom: 2%;
     left: 2%;
     right: 2%;
-    background-image: url("/public/loadingTexture.png");
+    background-image: url("../images/loading/loadingTexture.png");
     animation: progress-bar-stripes 1s linear infinite;
     height: 24px;
     border: 1px solid black;

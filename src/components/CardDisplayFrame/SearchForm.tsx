@@ -1,17 +1,19 @@
 import React, { useState } from "react";
 import { SearchParams } from "./CardDisplayFrame";
-import { pokeTypes, subtypes } from "../data";
-import { CardResults } from "../interfaces/Card";
+import { pokeTypes, subtypes } from "../../assets/data";
+import { CardResults } from "../../types/Card";
+import SearchOptions from "./SearchOptions";
 
 interface SearchFormProps {
     setSearchParams: (params: SearchParams) => void,
     getSearchParams: () => SearchParams,
     getCardData: () => void,
     resync: { syncing: boolean, method: () => Promise<void> },
-    cardNames: string[]
+    cardNames: string[],
 }
 
-export default function SearchForm(props: SearchFormProps) {
+export default function SearchForm(
+    { getSearchParams, setSearchParams, getCardData, resync, cardNames }: SearchFormProps) {
     const [searching, setSearching] = useState(false);
     const handleSubmit = async (event: React.FormEvent<EventTarget | HTMLFormElement>) => {
         event.preventDefault();
@@ -20,16 +22,16 @@ export default function SearchForm(props: SearchFormProps) {
             return;
         }
         setSearching(true);
-        await props.getCardData();
+        await getCardData();
         setSearching(false);
     }
 
     const getAutofillDatalist = () => {
-        const searchParams = props.getSearchParams();
+        const searchParams = getSearchParams();
 
         const getAutofillNames = () => {
             if (searchParams.searchBy === "name" && searchParams.standard) {
-                return props.cardNames;
+                return cardNames;
             }
             if (searchParams.searchBy === "types") {
                 return pokeTypes;
@@ -58,7 +60,7 @@ export default function SearchForm(props: SearchFormProps) {
                 <select
                     id="searchBy"
                     onChange={(e) => {
-                        props.setSearchParams({ ...props.getSearchParams(), searchBy: e.target.value });
+                        setSearchParams({ ...getSearchParams(), searchBy: e.target.value });
                     }}>
                     <option value="name">Name</option>
                     <option value="types">Type</option>
@@ -68,18 +70,19 @@ export default function SearchForm(props: SearchFormProps) {
                     list="cardName"
                     autoFocus={true}
                     type="text"
-                    value={props.getSearchParams().searchText}
-                    onChange={(e) => props.setSearchParams({ ...props.getSearchParams(), searchText: e.target.value })}
+                    value={getSearchParams().searchText}
+                    onChange={(e) => setSearchParams({ ...getSearchParams(), searchText: e.target.value })}
                 />
                 {getAutofillDatalist()}
                 <input type="submit" className="search" value="Search" disabled={searching} />
-                <button onClick={(e) => { e.preventDefault(); props.resync.method(); }}
+                <button onClick={(e) => { e.preventDefault(); resync.method(); }}
                     title="Re-Fetch card names data."
                     className="resyncButton"
-                    aria-disabled={props.resync.syncing}>
-                    {!props.resync.syncing ? "⟳" : <img src="/icons/loading/roller.gif" style={{ width: "20px" }}></img>}
+                    aria-disabled={resync.syncing}>
+                    {!resync.syncing ? "⟳" : <img src="/icons/loading/roller.gif" style={{ width: "20px" }}></img>}
                 </button>
             </form>
         </div>
+
     )
 } 

@@ -1,13 +1,11 @@
 import React from "react";
-import { Card } from "../../interfaces/Card";
+import { Card } from "../../../types/Card";
 
 interface FooterParams {
     card: Card
 }
 
-export default function Footer(params: FooterParams) {
-    const card = params.card;
-
+export default function Footer({ card }: FooterParams) {
     return (
         <div className="setInfo">
             <img src={card.set.images.symbol} />

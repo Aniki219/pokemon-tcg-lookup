@@ -13,7 +13,7 @@ module.exports = {
     ],
     entry: {
         popup: path.join(srcDir, 'popup.tsx'),
-        options: path.join(srcDir, 'options.tsx'),
+        options: path.join(srcDir, 'pages/options.tsx'),
     },
     output: {
         path: path.join(__dirname, "../dist/js"),

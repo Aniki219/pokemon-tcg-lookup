@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import CardDisplay from "./CardDisplay/CardDisplay";
 import { Card, CardResults } from "../../types/Card";
 import process from "process";
 import "../../assets/styles/CardDisplayFrame.css"
 import SearchOptions from "./SearchOptions";
-import { pokeTypes, subtypes } from "../../assets/data";
 import SearchForm from "./SearchForm";
 import Navbar from "./Navbar";
 

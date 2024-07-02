@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { SearchParams } from "./CardDisplayFrame";
 import { pokeTypes, subtypes } from "../../assets/data";
-import { CardResults } from "../../types/Card";
-import SearchOptions from "./SearchOptions";
 
 interface SearchFormProps {
     setSearchParams: (params: SearchParams) => void,

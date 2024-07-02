@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { Card, CardResults } from "./types/Card";
-import CardDisplay from "./components/CardDisplayFrame/CardDisplay/CardDisplay";
-import process from "process";
-import { render } from "react-dom";
 import CardDisplayFrame from "./components/CardDisplayFrame/CardDisplayFrame";
 import "./assets/styles/styles.css"
 import { CardSet } from "./types/Set";

@@ -6,7 +6,8 @@ export interface HeaderParams {
     name: string,
     hp?: number,
     cardTypes: string[],
-    superType: string
+    superType: string,
+    evolvesFrom?: string
 }
 
 export default function Header(card: HeaderParams) {
@@ -28,7 +29,10 @@ export default function Header(card: HeaderParams) {
 
     return (
         <div className="cardHeading">
-            <h2 id="name">{card.name}</h2>
+            <h2 id="name"
+                title={card.evolvesFrom ? `Evolves from: ${card.evolvesFrom}` : ""}>
+                {card.name}
+            </h2>
             <div className="types">
                 {card.hp ? <h2 id="hp">{card.hp}</h2> : <></>}
                 {typeData(card.cardTypes)}

@@ -4,6 +4,8 @@ import { Card, CardResults } from "../interfaces/Card";
 import process from "process";
 import "./styles/CardDisplayFrame.css"
 import SearchOptions from "./SearchOptions";
+import { pokeTypes, subtypes } from "../data";
+import SearchForm from "./SearchForm";
 
 interface ICardDisplayFrameProps {
     cardNames: string[],
@@ -12,7 +14,8 @@ interface ICardDisplayFrameProps {
 }
 
 export interface SearchParams {
-    name: string,
+    searchBy: string,
+    searchText: string,
     standard: boolean,
     exact: boolean,
     set: string
@@ -25,19 +28,21 @@ export default function CardDisplayFrame(props: React.PropsWithChildren<ICardDis
 
     const { cardNames } = props;
 
-    const [searching, setSearching] = useState(false);
+    const [searchParams, setSearchParams] = useState<SearchParams>(
+        { searchText: "", searchBy: "name", exact: false, standard: true, set: "Any" });
 
-    const [searchParams, setSearchParams] = useState<SearchParams>({ name: "", exact: false, standard: true, set: "Any" });
     const getSearchParams = () => {
         return searchParams;
     }
 
     const getCardData = async () => {
         const legalities = searchParams.standard ? "legalities.standard:legal" : "";
-        const { name } = searchParams;
+        const { searchText, searchBy } = searchParams;
         const set = searchParams.set === "Any" ? "" : `set.name:"${searchParams.set}"`;
         const exact = searchParams.exact ? "" : "*"
-        const url = `https://api.pokemontcg.io/v2/cards?q=${legalities} ${set} name:"${name}${exact}"`;
+
+        const url = `https://api.pokemontcg.io/v2/cards?q=${legalities} ${set} ${searchBy}:"${exact}${searchText}${exact}"`;
+
         return await fetch(url, {
             method: "GET",
             headers: {
@@ -88,7 +93,7 @@ export default function CardDisplayFrame(props: React.PropsWithChildren<ICardDis
         setCurrentCard(cardData.data[index]);
     }
 
-    const showIndex = () => {
+    const showNavbar = () => {
         if (!cardData) {
             return (
                 <span className="navbar"></span>
@@ -114,60 +119,21 @@ export default function CardDisplayFrame(props: React.PropsWithChildren<ICardDis
         )
     }
 
-    const handleSubmit = async (event: React.FormEvent<EventTarget | HTMLFormElement>) => {
-        event.preventDefault();
-
-        if (searching) {
-            return;
-        }
-        setSearching(true);
-        await getCardData();
-        setSearching(false);
-    }
-
-    const getCardListOptions = () => {
-        if (!cardNames) {
-            return <></>
-        }
-        return (
-            <datalist id="cardName">
-                {
-                    cardNames.map((cardName, i) => {
-                        return <option key={i} value={cardName} />
-                    })
-                }
-            </datalist>
-        )
-    }
-
     return (
         <div>
             <div style={{ minWidth: "500px", textAlign: "center" }}>
                 <h2 style={{ color: "white" }}>Nidoran TCG Lookup:</h2>
-                <div>
-                    <form onSubmit={(e) => { handleSubmit(e) }}>
-                        <label style={{ fontSize: "16px", color: "white", textShadow: "1px 1px black" }}>
-                            Card Name:
-                        </label>
-                        <input
-                            list="cardName"
-                            autoFocus={true}
-                            type="text"
-                            value={searchParams.name}
-                            onChange={(e) => setSearchParams({ ...searchParams, name: e.target.value })}
-                        />
-                        {getCardListOptions()}
-                        <input type="submit" className="search" value="Search" disabled={searching} />
-                        <button onClick={(e) => { e.preventDefault(); props.resync.method(); }}
-                            title="Re-Fetch card names data."
-                            className="resyncButton"
-                            aria-disabled={props.resync.syncing}>
-                            {!props.resync.syncing ? "⟳" : <img src="/icons/loading/roller.gif" style={{ width: "20px" }}></img>}
-                        </button>
-                    </form>
-                </div>
-                <SearchOptions setNames={props.setNames} setSearchParams={setSearchParams} getSearchParams={getSearchParams} />
-                {showIndex()}
+                <SearchForm
+                    setSearchParams={setSearchParams}
+                    getSearchParams={getSearchParams}
+                    cardNames={cardNames}
+                    getCardData={getCardData}
+                    resync={props.resync} />
+                <SearchOptions
+                    setNames={props.setNames}
+                    setSearchParams={setSearchParams}
+                    getSearchParams={getSearchParams} />
+                {showNavbar()}
             </div>
             <CardDisplay card={currentCard} incrementCardIndex={incrementCardIndex}></CardDisplay>
         </div>

@@ -43,12 +43,17 @@ export default function CardDisplay({ card, incrementCardIndex }: { card: Card |
                     name={card.name}
                     hp={card.hp}
                     cardTypes={card.types}
-                    superType={card.supertype} />
+                    superType={card.supertype}
+                    evolvesFrom={card.evolvesFrom} />
                 <CardText
                     abilities={card.abilities}
                     attacks={card.attacks}
                     rules={card.rules}
-                    subtypes={card.subtypes} />
+                    subtypes={card.subtypes}
+                    weaknesses={card.weaknesses}
+                    resistances={card.resistances}
+                    retreatCost={card.retreatCost}
+                    supertype={card.supertype} />
                 <Footer
                     card={card} />
             </div>

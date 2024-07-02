@@ -38,19 +38,14 @@ const Popup = () => {
 
         const promises = (new Array(totalPages)).fill(0).map((_, i) => {
             return new Promise<CardResults>((resolve) => {
-                try {
-                    const url = `https://api.pokemontcg.io/v2/cards?page=${i + 1}&q=legalities.standard:legal`;
-                    fetch(url)
-                        .then(resp => resp.json())
-                        .then(function (res: CardResults) {
-                            loaded++;
-                            setPagesLoaded({ loaded, totalPages });
-                            return resolve(res);
-                        });
-                } catch (e) {
-                    console.error(e);
-                }
-
+                const url = `https://api.pokemontcg.io/v2/cards?page=${i + 1}&q=legalities.standard:legal`;
+                fetch(url)
+                    .then(resp => resp.json())
+                    .then(function (res: CardResults) {
+                        loaded++;
+                        setPagesLoaded({ loaded, totalPages });
+                        return resolve(res);
+                    });
             })
         })
 

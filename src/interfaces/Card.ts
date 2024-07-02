@@ -3,17 +3,19 @@ import { CardSet } from "./Set"
 export interface Card {
     name: string,
     hp: number,
-    resistances: { type: string, value: string }[],
     retreatCost: string[],
     supertype: string,
     types: string[],
     weaknesses: { type: string, value: string }[],
+    resistances: { type: string, value: string }[],
     abilities: Ability[],
     attacks: Attack[],
     rules: string[],
     subtypes: string[],
     images: { small: string, large: string },
     set: CardSet,
+    evolvesTo?: string,
+    evolvesFrom?: string
 }
 
 export interface Ability { name: string, text: string, type: string }

@@ -39,8 +39,20 @@
 
 form input {
     margin: 3px;
+    margin-left: 0;
+    padding-left: 6px;
     font-family: system-ui;
     background-color: #ffffffad;
-    border-radius: 6px;
+    border-radius: 0 6px 6px 0;
     border-color: white;
+    border-width: 1px 1px 1px 0px;
+}
+
+form select {
+    font-family: system-ui;
+    background-color: #ffffffcc;
+    border-radius: 6px 0 0 6px;
+    border-color: white;
+    border-width: 1px 0px 1px 1px;
+    border-style: inset;
 }

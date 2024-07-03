@@ -8,10 +8,11 @@ import Navbar from "./Navbar";
 import { SetNamesByLegality } from "types/Set";
 import { getCards } from "../../services/CardService";
 
-interface ICardDisplayFrameProps {
+interface CardDisplayFrameProps {
     cardNames: string[],
     setNames: SetNamesByLegality,
     resync: { syncing: boolean, method: () => Promise<void> }
+    setStatus: (status: string) => void,
 }
 
 export interface SearchParams {
@@ -22,7 +23,7 @@ export interface SearchParams {
     set: string
 }
 
-export default function CardDisplayFrame({ cardNames, setNames, resync }: ICardDisplayFrameProps) {
+export default function CardDisplayFrame({ cardNames, setNames, resync, setStatus }: CardDisplayFrameProps) {
     const [cardData, setCardData] = useState<CardResults>();
 
     const [currentCard, setCurrentCard] = useState<Card>();
@@ -49,7 +50,8 @@ export default function CardDisplayFrame({ cardNames, setNames, resync }: ICardD
                     getSearchParams={getSearchParams}
                     cardNames={cardNames}
                     getCardData={getCardData}
-                    resync={resync} />
+                    resync={resync}
+                    setStatus={setStatus} />
                 <SearchOptions
                     setNames={setNames}
                     setSearchParams={setSearchParams}

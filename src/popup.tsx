@@ -6,6 +6,7 @@ import "./assets/styles/styles.css"
 import { SetNamesByLegality } from "./types/Set";
 import { fetchCurrentSetFromLocalStorage, fetchSetData, getSetNamesByLegality, updateLatestSetLocal } from "./services/SetService";
 import { getPagesOfCards } from "./services/CardService";
+import StatusBar from "./components/StatusBar";
 
 const Popup = () => {
     const [cardNames, setCardNames] = useState<string[]>([]);
@@ -32,24 +33,29 @@ const Popup = () => {
 
         await chrome.storage.local.set({ "cardNames": cardNameResults });
         setCardNames(cardNameResults);
-
-        setStatus("Finished Syncing");
-        setTimeout(() => {
-            setStatus("");
-        }, 4000);
     }
 
     const checkForNewSets = async () => {
         setStatus("Checking for new Set Data");
 
         const currentSet = await fetchCurrentSetFromLocalStorage();
-        const standardSets = await fetchSetData();
-        const latestSet = standardSets.at(-1)?.name;
+        const unlimitedSets = await fetchSetData();
+        const setNamesByLegality = getSetNamesByLegality(unlimitedSets);
+        setSetNames(setNamesByLegality);
+        const latestSet = unlimitedSets.at(-1)?.name;
 
         if (latestSet !== currentSet) {
-            await updateLatestSetLocal(standardSets);
+            setStatus("Syncing with new Set Data");
+            await updateLatestSetLocal(unlimitedSets);
         }
+
+        const standardSets = unlimitedSets
+            .filter(s => {
+                return setNamesByLegality.standard.includes(s.name);
+            });
+
         setStatus("");
+        return { standardSets, unlimitedSets, latestSet }
     }
 
     const [syncing, setSyncing] = useState(false);
@@ -59,38 +65,23 @@ const Popup = () => {
         }
         setSyncing(true);
 
-        setStatus("Syncing card name data");
-        const cardSets = await fetchSetData();
-        const setNamesByLegality = getSetNamesByLegality(cardSets);
-        setSetNames(setNamesByLegality);
-        const latestSet = await updateLatestSetLocal(cardSets);
+        const { standardSets, latestSet } = await checkForNewSets();
 
-        const totalCards = cardSets
-            .filter(s => {
-                return setNamesByLegality.standard.includes(s.name);
-            })
+        const totalCards = standardSets
             .map(d => {
                 return d.total;
             })
             .reduce((a, b) => a + b, 0);
         const totalPages = Math.ceil(totalCards / 250);
 
-        setStatus("Fetching new set " + latestSet.name);
+        setStatus("Fetching autofill card names up to set: " + latestSet);
         await getAllCardNames(totalPages);
         setSyncing(false);
-    }
 
-    const showFetchStatus = () => {
-        if (status && status.length > 0) {
-            return (
-                <div className="statusBar">
-                    <p>
-                        {status}...
-                        {pagesLoaded.totalPages > 0 ? `${pagesLoaded.loaded} / ${pagesLoaded.totalPages}` : ""}
-                    </p>
-                </div>
-            )
-        }
+        setStatus("Finished Syncing");
+        setTimeout(() => {
+            setStatus("");
+        }, 4000);
     }
 
     return (
@@ -98,8 +89,9 @@ const Popup = () => {
             <CardDisplayFrame
                 cardNames={cardNames}
                 setNames={setNames}
-                resync={{ syncing, method: resyncCardNames }} />
-            {showFetchStatus()}
+                resync={{ syncing, method: resyncCardNames }}
+                setStatus={setStatus} />
+            <StatusBar status={status} pagesLoaded={pagesLoaded} />
         </div>
     )
 };

@@ -35,7 +35,11 @@ export const getPagesOfCards = async (totalPages: number, setPagesLoaded: (pages
                 return [] as Card[];
             }); //Card[][]
 
-            const names = pagesData.flat().map(data => data.name);
+            const names = pagesData
+                .flat()
+                .map(data => {
+                    return data.name
+                });
             const uniqueNames = Array.from(new Set(names));
             const alphabetizedNames = uniqueNames.sort((a, b) => (a > b) ? 1 : -1);
 
@@ -59,6 +63,9 @@ export const getCards = async (searchParams: SearchParams): Promise<CardResults>
     })
         .then(resp => resp.json())
         .then(function (cardResults: CardResults) {
+            if (!cardResults || cardResults.data.length === 0) {
+                return cardResults;
+            }
             const cardDataByName = new Map<string, Card[]>();
             const cards = cardResults.data;
 

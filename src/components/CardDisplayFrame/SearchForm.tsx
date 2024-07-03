@@ -8,10 +8,11 @@ interface SearchFormProps {
     getCardData: () => void,
     resync: { syncing: boolean, method: () => Promise<void> },
     cardNames: string[],
+    setStatus: (status: string) => void
 }
 
 export default function SearchForm(
-    { getSearchParams, setSearchParams, getCardData, resync, cardNames }: SearchFormProps) {
+    { getSearchParams, setSearchParams, getCardData, resync, cardNames, setStatus }: SearchFormProps) {
     const [searching, setSearching] = useState(false);
     const handleSubmit = async (event: React.FormEvent<EventTarget | HTMLFormElement>) => {
         event.preventDefault();
@@ -20,7 +21,11 @@ export default function SearchForm(
             return;
         }
         setSearching(true);
+        const { searchText, searchBy, set, standard, exact } = getSearchParams()
+        const stautsMessage = `Searching ${searchBy}: ${searchText}${exact ? `` : `*`} ${set !== "Any" ? ` in set: ${set}` : ``} (${standard ? `Standard` : `Unlimited`})`
+        setStatus(stautsMessage);
         await getCardData();
+        setStatus("");
         setSearching(false);
     }
 

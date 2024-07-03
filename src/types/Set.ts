@@ -12,3 +12,8 @@ export interface CardSetImages {
     symbol: string,
     logo: string,
 }
+
+export interface SetNamesByLegality {
+    standard: string[],
+    unlimited: string[]
+}

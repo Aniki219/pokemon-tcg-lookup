@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
 import { SearchParams } from "./CardDisplayFrame";
+import { SetNamesByLegality } from "types/Set";
 
 interface SearchOptionProps {
-    setNames: { legal: string[], all: string[] }
+    setNames: SetNamesByLegality,
     getSearchParams: () => SearchParams,
     setSearchParams: (params: SearchParams) => void
 }
@@ -33,7 +34,7 @@ export default function SearchOptions({ setNames, getSearchParams, setSearchPara
                         setSearchParams({ ...getSearchParams(), set: e.target.value })
                     }}>
                         <option key={0} value="Any">Any</option>
-                        {(getSearchParams().standard ? setNames.legal : setNames.all)
+                        {(getSearchParams().standard ? setNames.standard : setNames.unlimited)
                             .map((name, i) => {
                                 return (
                                     <option key={i + 1} value={name}>{name}</option>

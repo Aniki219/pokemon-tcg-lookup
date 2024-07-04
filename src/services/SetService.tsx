@@ -1,4 +1,4 @@
-import { CardSet, SetNamesByLegality } from "types/Set";
+import { CardSet, SetNamesByLegality } from "@models/Set";
 
 export const fetchSetData = async (): Promise<CardSet[]> => {
     const url = `https://api.pokemontcg.io/v2/sets`;

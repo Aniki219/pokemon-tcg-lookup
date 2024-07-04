@@ -1,8 +1,8 @@
 {
-    "manifest_version": 3,
+    "manifest_version": 4,
     "name": "Nidoran - Pokemon TCG Lookup",
     "description": "Quickly lookup Pokemon cards and read what they do in a small window.",
-    "version": "1.6",
+    "version": "1.8",
     "options_ui": {
         "page": "options.html"
     },

@@ -1,5 +1,5 @@
 import { SearchParams } from "components/CardDisplayFrame/CardDisplayFrame";
-import { Card, CardResults } from "types/Card";
+import { Card, CardResults } from "@/models/Card";
 import process from "process";
 
 export const getPagesOfCards = async (totalPages: number, setPagesLoaded: (pagesLoaded: PagesLoaded) => void) => {

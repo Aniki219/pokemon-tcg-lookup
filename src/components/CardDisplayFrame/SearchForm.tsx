@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import { SearchParams } from "./CardDisplayFrame";
-import { pokeTypes, subtypes } from "../../assets/data";
+import { pokeTypes, subtypes } from "@/assets/data";
+import rollerImage from "@images/loading/roller.gif";
+import optionsImage from "@images/icons/optionsGear.png";
 
 interface SearchFormProps {
+    searchBarVisible: boolean,
+    setSearchBarVisible: (visible: boolean) => void,
     setSearchParams: (params: SearchParams) => void,
     getSearchParams: () => SearchParams,
     getCardData: () => void,
@@ -12,7 +16,7 @@ interface SearchFormProps {
 }
 
 export default function SearchForm(
-    { getSearchParams, setSearchParams, getCardData, resync, cardNames, setStatus }: SearchFormProps) {
+    { getSearchParams, setSearchParams, getCardData, resync, cardNames, setStatus, setSearchBarVisible, searchBarVisible }: SearchFormProps) {
     const [searching, setSearching] = useState(false);
     const handleSubmit = async (event: React.FormEvent<EventTarget | HTMLFormElement>) => {
         event.preventDefault();
@@ -21,11 +25,14 @@ export default function SearchForm(
             return;
         }
         setSearching(true);
+
         const { searchText, searchBy, set, standard, exact } = getSearchParams()
         const stautsMessage = `Searching ${searchBy}: ${searchText}${exact ? `` : `*`} ${set !== "Any" ? ` in set: ${set}` : ``} (${standard ? `Standard` : `Unlimited`})`
+
         setStatus(stautsMessage);
         await getCardData();
         setStatus("");
+
         setSearching(false);
     }
 
@@ -82,10 +89,15 @@ export default function SearchForm(
                     title="Re-Fetch card names data."
                     className="resyncButton"
                     aria-disabled={resync.syncing}>
-                    {!resync.syncing ? "⟳" : <img src="/icons/loading/roller.gif" style={{ width: "20px" }}></img>}
+                    {!resync.syncing ? "⟳" : <img src={rollerImage} style={{ width: "20px" }}></img>}
+                </button>
+                <button onClick={(e) => { e.preventDefault(); setSearchBarVisible(!searchBarVisible); }}
+                    title="Toggle Options"
+                    className="optionsButton">
+                    <img src={optionsImage} />
                 </button>
             </form>
-        </div>
+        </div >
 
     )
 } 

@@ -67,3 +67,15 @@
     background-clip: content-box;
     background-color: #ffffff8d;
 }
+
+body {
+    border: 6px solid black;
+    border-radius: 17px;
+    background-color: white;
+    margin: 0px;
+    background: url("@images/background.png");
+    background-color: #ffffff;
+    background-blend-mode: luminosity;
+    transition: background-color 1s;
+    min-width: 575px;
+}

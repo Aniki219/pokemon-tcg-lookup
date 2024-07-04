@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import CardDisplay from "./CardDisplay/CardDisplay";
-import { Card, CardResults } from "../../types/Card";
-import "../../assets/styles/CardDisplayFrame.css"
+import CardDisplay from "@components/CardDisplay";
+import { Card, CardResults } from "@/models/Card";
+import "@styles/CardDisplayFrame.css"
 import SearchOptions from "./SearchOptions";
 import SearchForm from "./SearchForm";
 import Navbar from "./Navbar";
-import { SetNamesByLegality } from "types/Set";
-import { getCards } from "../../services/CardService";
+import { SetNamesByLegality } from "@/models/Set";
+import { getCards } from "@services/CardService";
 
 interface CardDisplayFrameProps {
     cardNames: string[],
@@ -25,8 +25,9 @@ export interface SearchParams {
 
 export default function CardDisplayFrame({ cardNames, setNames, resync, setStatus }: CardDisplayFrameProps) {
     const [cardData, setCardData] = useState<CardResults>();
-
     const [currentCard, setCurrentCard] = useState<Card>();
+
+    const [searchBarVisible, setSearchBarVisibile] = useState(false);
 
     const [searchParams, setSearchParams] = useState<SearchParams>(
         { searchText: "", searchBy: "name", exact: false, standard: true, set: "Any" });
@@ -51,11 +52,14 @@ export default function CardDisplayFrame({ cardNames, setNames, resync, setStatu
                     cardNames={cardNames}
                     getCardData={getCardData}
                     resync={resync}
-                    setStatus={setStatus} />
+                    setStatus={setStatus}
+                    setSearchBarVisible={setSearchBarVisibile}
+                    searchBarVisible={searchBarVisible} />
                 <SearchOptions
                     setNames={setNames}
                     setSearchParams={setSearchParams}
-                    getSearchParams={getSearchParams} />
+                    getSearchParams={getSearchParams}
+                    visible={searchBarVisible} />
                 <Navbar
                     cardData={cardData}
                     setCurrentCard={setCurrentCard} />

@@ -1,6 +1,6 @@
 import React from "react";
-import { spellPokemon } from "../../../assets/data";
-import { getTypeIconLarge } from "../../TypeIcon";
+import { spellPokemon } from "@assets/data";
+import { getTypeIconLarge } from "@components/TypeIcon";
 
 export interface HeaderParams {
     name: string,

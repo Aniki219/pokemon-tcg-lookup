@@ -1,5 +1,5 @@
 import React from "react";
-import { Card } from "../../../types/Card";
+import { Card } from "@/models/Card";
 
 interface FooterParams {
     card: Card

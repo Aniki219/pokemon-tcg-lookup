@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { Card, CardResults } from "./types/Card";
-import CardDisplayFrame from "./components/CardDisplayFrame/CardDisplayFrame";
-import "./assets/styles/styles.css"
-import { SetNamesByLegality } from "./types/Set";
-import { fetchCurrentSetFromLocalStorage, fetchSetData, getSetNamesByLegality, updateLatestSetLocal } from "./services/SetService";
-import { getPagesOfCards } from "./services/CardService";
-import StatusBar from "./components/StatusBar";
+import CardDisplayFrame from "@components/CardDisplayFrame";
+import "@styles/styles.css"
+import { SetNamesByLegality } from "@models/Set";
+import { fetchCurrentSetFromLocalStorage, fetchSetData, getSetNamesByLegality, updateLatestSetLocal } from "@services/SetService";
+import { getPagesOfCards } from "@services/CardService";
+import StatusBar from "@components/StatusBar";
 
 const Popup = () => {
     const [cardNames, setCardNames] = useState<string[]>([]);

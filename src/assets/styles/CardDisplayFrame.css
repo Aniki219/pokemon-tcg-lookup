@@ -37,6 +37,25 @@
     color: rgb(253, 226, 178);
 }
 
+.optionsButton {
+    background: none;
+    border: none;
+    vertical-align: bottom;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+}
+
+.optionsButton:hover {
+    rotate: 1rad;
+    transform-origin: center;
+}
+
+.optionsButton img {
+    width: 26px;
+    vertical-align: bottom;
+}
+
 form input {
     margin: 3px;
     margin-left: 0;
@@ -55,4 +74,17 @@ form select {
     border-color: white;
     border-width: 1px 0px 1px 1px;
     border-style: inset;
+}
+
+#set {
+    margin-left: 5px;
+    padding-left: 2px;
+    font-family: system-ui;
+    background-color: #ffffffad;
+    border-radius: 6px;
+    border-color: white;
+}
+
+option {
+    font-family: system-ui;
 }

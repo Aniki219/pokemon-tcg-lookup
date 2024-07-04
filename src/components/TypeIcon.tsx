@@ -1,5 +1,5 @@
 import React from "react"
-import { getIconByType } from "../assets/data"
+import { getIconByType } from "@assets/data"
 
 export function getTypeIcon(pokeType: string, key: number = 0) {
     return <img key={key} src={getIconByType(pokeType)} style={{ width: "18px" }}></img>

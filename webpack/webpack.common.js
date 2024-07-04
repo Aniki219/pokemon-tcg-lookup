@@ -1,6 +1,8 @@
 const webpack = require("webpack");
 const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+
 const srcDir = path.join(__dirname, "..", "src");
 
 module.exports = {
@@ -41,16 +43,34 @@ module.exports = {
                     "css-loader", // 2. Turns css into commonjs
                 ],
             },
+            {
+                test: /\.(png|svg|jpg|gif)$/,
+                type: "asset/resource",
+                generator: {
+                    filename: "assets/images/[name][ext]"
+                }
+            },
         ],
     },
     resolve: {
         extensions: [".ts", ".tsx", ".js"],
+        plugins: [new TsconfigPathsPlugin({
+            configFile: 'tsconfig.json',
+            extensions: ['.ts', '.js', '.tsx']
+        })]
     },
     plugins: [
         new CopyPlugin({
-            patterns: [{ from: ".", to: "../", context: "public" }],
+            patterns: [{
+                from: ".", to: "../", context: "public",
+                globOptions: {
+                    ignore: [
+                        '**/screenshots',
+                    ]
+                }
+            }],
             options: {},
-        }),
+        })
     ],
 
 };

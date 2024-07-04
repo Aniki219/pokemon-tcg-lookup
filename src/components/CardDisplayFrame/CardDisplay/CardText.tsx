@@ -1,7 +1,7 @@
 import React from "react";
-import { Ability, Attack, Card } from "../../../types/Card";
-import { getTypeIcon } from "../../TypeIcon";
-import { spellPokemon } from "../../../assets/data";
+import { Ability, Attack, Card } from "@/models/Card";
+import { getTypeIcon } from "@components/TypeIcon";
+import { spellPokemon } from "@assets/data";
 
 interface CardTextParams {
     abilities?: Ability[],

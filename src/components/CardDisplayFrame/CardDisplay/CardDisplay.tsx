@@ -1,10 +1,11 @@
-import React, { useEffect } from "react"
-import { Card } from "../../../types/Card"
-import "../../../assets/styles/CardDisplay.css"
-import { getColorByType, getIconByType, isPokeType } from "../../../assets/data"
+import React, { useEffect, useState } from "react"
+import { Card } from "@models/Card"
+import "@styles/CardDisplay.css"
+import { getColorByType, getIconByType, isPokeType } from "@assets/data"
 import Header from "./Header"
 import CardText from "./CardText"
 import Footer from "./Footer"
+import cardBack from "@images/cardBack.png"
 
 interface CardDisplayProps {
     card: Card | undefined
@@ -15,7 +16,7 @@ export default function CardDisplay({ card }: CardDisplayProps) {
     useEffect(() => {
         if (card?.types) {
             const type = card.types[0];
-            document.body.style.setProperty("background-color", getColorByType(type) || "white");
+            document.body.style.setProperty("background-color", getColorByType(type)?.color || "white");
         } else {
             document.body.style.setProperty("background-color", "white");
         }
@@ -25,7 +26,7 @@ export default function CardDisplay({ card }: CardDisplayProps) {
         return (
             <div style={{ display: "flex" }}>
                 <div className="cardImage" >
-                    <img src="/cardBack.png" />
+                    <img src={cardBack} />
                 </div>
                 <div className="cardInfo">
                     <div className="noCardText">

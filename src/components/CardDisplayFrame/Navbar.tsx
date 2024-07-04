@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Card, CardResults } from "../../types/Card";
+import { Card, CardResults } from "@/models/Card";
 
 interface NavbarProps {
     cardData: CardResults | undefined,

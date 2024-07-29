@@ -20,25 +20,29 @@
     }
 }
 
-.statusBar {
+.statusList {
     position: absolute;
+    bottom: 2%;
+    right: 2%;
+    left: 2%;
+    list-style: none;
+    padding: 0px;
+}
+
+.statusBar {
     color: white;
     text-shadow: 1px 1px black;
     font-weight: bold;
-    bottom: 2%;
-    left: 2%;
-    right: 2%;
-    background-image: url("../images/loading/loadingTexture.png");
+    background-image: url(chrome-extension://lkmkfgkjljefjfdnnhgpbdlijeflndmp/js/assets/images/loadingTexture.png);
     animation: progress-bar-stripes 1s linear infinite;
-    height: 24px;
+    height: 30px;
     border: 1px solid black;
     border-radius: 10px;
     font-size: larger;
     font-family: sans-serif;
-}
-
-.statusBar p {
-    margin-left: 10px;
+    margin-top: 4px;
+    line-height: 30px;
+    padding-left: 5px;
 }
 
 @keyframes progress-bar-stripes {

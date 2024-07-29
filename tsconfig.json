@@ -11,7 +11,7 @@
         "noEmitOnError": true,
         "jsx": "react",
         "typeRoots": [
-            "node_modules/@types"
+            "node_modules/@types",
         ],
         "baseUrl": "src",
         "paths": {
@@ -34,6 +34,9 @@
             ],
             "@services/*": [
                 "./services/*"
+            ],
+            "@utils/*": [
+                "./utils/*"
             ],
             "@styles/*": [
                 "./assets/styles/*"

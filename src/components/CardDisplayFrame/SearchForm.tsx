@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { SearchParams } from "./CardDisplayFrame";
+import { SearchParams } from "@utils/helpers";
 import { pokeTypes, subtypes } from "@/assets/data";
 import rollerImage from "@images/loading/roller.gif";
 import optionsImage from "@images/icons/optionsGear.png";
@@ -12,11 +12,21 @@ interface SearchFormProps {
     getCardData: () => void,
     resync: { syncing: boolean, method: () => Promise<void> },
     cardNames: string[],
-    setStatus: (status: string) => void
+    setStatus: (status: string, time?: number) => string,
+    removeStatus: (id: string) => void
 }
 
-export default function SearchForm(
-    { getSearchParams, setSearchParams, getCardData, resync, cardNames, setStatus, setSearchBarVisible, searchBarVisible }: SearchFormProps) {
+export default function SearchForm({
+    getSearchParams,
+    setSearchParams,
+    getCardData,
+    resync,
+    cardNames,
+    setStatus,
+    removeStatus,
+    setSearchBarVisible,
+    searchBarVisible
+}: SearchFormProps) {
     const [searching, setSearching] = useState(false);
     const handleSubmit = async (event: React.FormEvent<EventTarget | HTMLFormElement>) => {
         event.preventDefault();
@@ -27,11 +37,11 @@ export default function SearchForm(
         setSearching(true);
 
         const { searchText, searchBy, set, standard, exact } = getSearchParams()
-        const stautsMessage = `Searching ${searchBy}: ${searchText}${exact ? `` : `*`} ${set !== "Any" ? ` in set: ${set}` : ``} (${standard ? `Standard` : `Unlimited`})`
+        const statusMessage = `Searching ${searchBy}: ${searchText} ${set !== "Any" ? ` in set: ${set}` : ``} (${standard ? `Standard` : `Unlimited`})`
 
-        setStatus(stautsMessage);
+        const searchingStatus = setStatus(statusMessage);
         await getCardData();
-        setStatus("");
+        removeStatus(searchingStatus);
 
         setSearching(false);
     }

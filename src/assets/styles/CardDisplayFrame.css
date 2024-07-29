@@ -76,7 +76,7 @@ form select {
     border-style: inset;
 }
 
-#set {
+select#set {
     margin-left: 5px;
     padding-left: 2px;
     font-family: system-ui;

@@ -7,30 +7,30 @@ import SearchForm from "./SearchForm";
 import Navbar from "./Navbar";
 import { SetNamesByLegality } from "@/models/Set";
 import { getCards } from "@services/CardService";
+import { SearchParams } from "@utils/helpers";
 
 interface CardDisplayFrameProps {
     cardNames: string[],
     setNames: SetNamesByLegality,
     resync: { syncing: boolean, method: () => Promise<void> }
-    setStatus: (status: string) => void,
+    setStatus: (status: string, time?: number) => string,
+    removeStatus: (id: string) => void
 }
 
-export interface SearchParams {
-    searchBy: string,
-    searchText: string,
-    standard: boolean,
-    exact: boolean,
-    set: string
-}
-
-export default function CardDisplayFrame({ cardNames, setNames, resync, setStatus }: CardDisplayFrameProps) {
+export default function CardDisplayFrame({
+    cardNames,
+    setNames,
+    resync,
+    setStatus,
+    removeStatus
+}: CardDisplayFrameProps) {
     const [cardData, setCardData] = useState<CardResults>();
     const [currentCard, setCurrentCard] = useState<Card>();
 
     const [searchBarVisible, setSearchBarVisibile] = useState(false);
 
     const [searchParams, setSearchParams] = useState<SearchParams>(
-        { searchText: "", searchBy: "name", exact: false, standard: true, set: "Any" });
+        { searchText: "", searchBy: "name", exact: false, standard: true, set: "Any", page: 1, totalPages: 1 });
 
     const getSearchParams = () => {
         return searchParams;
@@ -53,6 +53,7 @@ export default function CardDisplayFrame({ cardNames, setNames, resync, setStatu
                     getCardData={getCardData}
                     resync={resync}
                     setStatus={setStatus}
+                    removeStatus={removeStatus}
                     setSearchBarVisible={setSearchBarVisibile}
                     searchBarVisible={searchBarVisible} />
                 <SearchOptions

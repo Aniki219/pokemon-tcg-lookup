@@ -14,9 +14,9 @@ export const fetchSetData = async (): Promise<CardSet[]> => {
         })
 }
 
-export const fetchCurrentSetFromLocalStorage = async (): Promise<string | undefined> => {
+export const fetchCurrentSetFromLocalStorage = async (): Promise<CardSet | undefined> => {
     const data = await chrome.storage.local.get("currentSet");
-    return data.currentSet as string | undefined; //TODO: or ""
+    return data.currentSet;
 }
 
 export const updateLatestSetLocal = async (setsData: CardSet[]): Promise<CardSet> => {

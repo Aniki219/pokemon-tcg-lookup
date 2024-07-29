@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { SearchParams } from "./CardDisplayFrame";
+import { SearchParams } from "@utils/helpers";
 import { SetNamesByLegality } from "@models/Set";
 
 interface SearchOptionProps {
